@@ -19,6 +19,10 @@ app.get("/acceuil", (req, res) => {
     res.render("index", {pageTitle: "Acceuil"});
 });
 
+app.get("/", (req, res) => {
+    res.render("index", {pageTitle: "Acceuil"});
+});
+
 app.listen(3000, () => {
     console.log("Server started on port 3000");
 })
