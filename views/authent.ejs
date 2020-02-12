@@ -1,0 +1,37 @@
+<%- include("partials/header") %>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow p-3 bg-white">
+        <a class="navbar-brand ml-auto" href="#">
+            <img src="/images/logo_mm.png" alt="">
+        </a>
+        <div class="collapse navbar-collapse">
+                <span class="navbar-text mx-auto">
+                    Gestionnaire Des Congés
+                </span>
+        </div>
+    </nav>
+
+    <div class="container shadow-lg p-3 mb-5 bg-white auth-cntnr">
+        <h1 class="mb-3 p-3">Authentification</h1>
+        <form class="auth-form" action="">
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <div class="input-group-text"><i class="fas fa-user"></i></div>
+                </div>
+                <input type="text" class="form-control" id="inlineFormInputGroup" name="userName" placeholder="Identifiant">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <div class="input-group-text"><i class="fas fa-unlock-alt"></i></div>
+                </div>
+                <input type="password" class="form-control" id="inlineFormInputGroup" name="userPass" placeholder="Mot de Passe">
+            </div>
+            
+            <button class="btn btn-outline-dark mb-3" type="submit">Entrer <i class="fas fa-sign-in-alt"></i></button>
+        </form>
+    </div>
+</body>
+</html>
