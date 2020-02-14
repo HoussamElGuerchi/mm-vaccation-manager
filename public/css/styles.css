@@ -7,15 +7,22 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Merriweather';
+    margin-bottom: 15px;
 }
 
 nav {
     background-color: #dcdde1
 }
 
-#home {
+form {
+}
+
+.content {
     text-align: left;
-    margin-top: 2%;
+}
+
+.center {
+    text-align: center;
 }
 
 .welcome {
