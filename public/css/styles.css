@@ -1,8 +1,23 @@
 body {
     text-align: center;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    background-color: #f5f6fa
 }
 
-h1 {
+h1, h2, h3, h4, h5, h6 {
     font-family: 'Merriweather';
+}
+
+nav {
+    background-color: #dcdde1
+}
+
+#home {
+    text-align: left;
+    margin-top: 2%;
+}
+
+.welcome {
+    margin: auto;
 }

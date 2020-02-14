@@ -20,7 +20,8 @@ app.get("/acceuil", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-    res.render("index", {pageTitle: "Acceuil"});
+    // res.render("index", {pageTitle: "Acceuil"});
+    res.redirect("/authent");
 });
 
 app.listen(3000, () => {

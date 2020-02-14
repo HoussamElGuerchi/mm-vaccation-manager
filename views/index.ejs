@@ -1,43 +1,39 @@
 <%- include("partials/header") %>
 
-    <div class="container">
-        <h3>Bienvenue User Name</h3>
-        <p>Consulter les utilités du gestionnaire des congés: </p>
-    </div>
+    <div class="container" id="home">
+        <div class="container p-3 center welcome">
+            <h1>Bienvenue User Name</h3>
+            <p>Le gestionnaire des congés vous permettez de profiter des fonctionnalités suivantes: </p>
+        </div>
 
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <div class="card" style="width: 18rem;">
-                    <img src="images/form.jpeg" class="card-img-top" alt="...">
+        <div class="container">
+            <div class="card-deck mb-5">
+                <div class="card shadow">
+                    <img src="images/form.jpeg" class="card-img-top">
                     <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                        <h5 class="card-title">Affecter un congé.</h5>
+                        <p class="card-text">Ajouter des congés au personnels selon leur service et situation.</p>
+                    </div>
+                </div>
+                <div class="card shadow">
+                    <img src="images/list.jpeg" class="card-img-top" height="225.328px">
+                    <div class="card-body">
+                        <h5 class="card-title">Lister les personnels.</h5>
+                        <p class="card-text">Afficher la liste détaillée des personnels du Marsa Maroc.</p>
+                    </div>
+                </div>
+                <div class="card shadow">
+                    <img src="images/archive.jpeg" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title">Visualiser les congés effectués.</h5>
+                        <p class="card-text">Afficher l'historique de tous les congés prisent par les employés.</p>
                     </div>
                 </div>
             </div>
-            <div class="col">
-                    <div class="card" style="width: 18rem;">
-                        <img src="images/list.jpeg" class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                            <a href="#" class="btn btn-primary">Go somewhere</a>
-                        </div>
-                    </div>
-            </div>
-            <div class="col">
-                    <div class="card" style="width: 18rem;">
-                        <img src="images/archive.jpeg" class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                            <a href="#" class="btn btn-primary">Go somewhere</a>
-                        </div>
-                    </div>
-            </div>
-        <div>        
+        </div>
+        <div class="alert alert-secondary p-3 ml-3 mr-3" role="alert">
+            <i class="fas fa-info-circle"></i>  Naviger dans le menu au dessus pour utiliser ses fonctionnalités.
+        </div>
     </div>
 </body>
 </html>
