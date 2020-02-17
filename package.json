@@ -9,10 +9,10 @@
   "author": "Houssam El Guerchi",
   "license": "ISC",
   "dependencies": {
+    "alert-node": "^2.1.4",
     "body-parser": "^1.19.0",
     "bootstrap-icons": "^1.0.0-alpha2",
     "ejs": "^3.0.1",
-    "epress": "0.0.1-security",
     "express": "^4.17.1",
     "lodash": "^4.17.15"
   }

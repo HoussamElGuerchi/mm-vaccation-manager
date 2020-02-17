@@ -2,11 +2,11 @@
 
     <div class="container content mt-5">
         <h1 class="mt-4">Nouveau Congé:</h1>
-        <form action="">
+        <form action="/nouveau-conge" method="POST">
             <div class="form-group">
                 <div class="form-group">
                     <label for="">Matricule :</label>
-                    <input type="text" name="matricule" class="form-control" required autocomplete="off">
+                    <input type="text" name="employeeId" class="form-control" required autocomplete="off" placeholder="Exemple: A01xxx">
                 </div>
                 <div class="form-group">
                     <label for="">Période de validité :</label>
@@ -23,9 +23,15 @@
                 </div>
                 <div class="form-group">
                     <label for="">Nature :</label>
-                    <select name="nature" class="form-control">
+                    <select name="leaveType" class="form-control">
                         <option value="administratif">Administratif</option>
-                        <option value="exceptionel">Exceptionel</option>
+                        <option value="Maternite">Maternité</option>
+                        <option value="Maladie Professionnelles ou Accident de travail">Maladie Professionnelles ou Accident de travail</option>
+                        <option value="Mariage">Mariage</option>
+                        <option value="Naissance">Naissance</option>
+                        <option value="Deces">Décès</option>
+                        <option value="Circoncision">Circoncision</option>
+                        <option value="Hospitalisation du conjoint ou d'un enfant">Hospitalisation du conjoint ou d'un enfant</option>
                     </select>
                 </div>
             </div>
@@ -34,6 +40,17 @@
                 <button type="reset" class="btn btn-outline-danger m-2">Annuler</button>
             </div>
         </form>
+        <% if (error) { %>
+            <div class="alert alert-danger" role="alert">
+                Période du congé invalide, veuillez vérifier la date de début et la date du fin du congé.
+            </div>
+        <% } %>
+        <% if (success) { %>
+            <div class="alert alert-success" role="alert">
+                Congé ajouter avec succès.
+            </div>
+        <% } %>
     </div>
+    
 
 <%- include("partials/footer") %> 
