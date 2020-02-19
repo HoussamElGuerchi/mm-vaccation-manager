@@ -41,13 +41,22 @@
             </div>
         </form>
         <% if (error) { %>
-            <div class="alert alert-danger" role="alert">
-                Période du congé invalide, veuillez vérifier la date de début et la date du fin du congé.
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                Période du congé invalide, veuillez vérifier la date de début et de la fin du congé.
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
         <% } %>
         <% if (success) { %>
-            <div class="alert alert-success" role="alert">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
                 Congé ajouter avec succès.
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="center">
+                <a class="btn btn-success" href="#" download=""><i class="fas fa-print"></i> Imprimer</a>
             </div>
         <% } %>
     </div>

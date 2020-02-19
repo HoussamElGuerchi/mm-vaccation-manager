@@ -2,7 +2,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const _ = require("lodash");
-const $ = require("jquery");
+const date = require(__dirname + "/date.js");
+const employeeModel = require(__dirname + "/models/employee.js");
 
 const app = express();
 
@@ -48,13 +49,25 @@ app.post("/nouveau-conge", (req, res) => {
             employeeId: req.body.employeeId,
             startDate: req.body.startDate,
             endDate: req.body.endDate,
-            type: req.body.leaveType
+            type: req.body.leaveType,
+            numberOfDays: date.calculDays(req.body.startDate, req.body.endDate)
         }
+        
         leaveList.push(newLeave);
         res.render("leave-form", {pageTitle: "Nouveau Congé", error: false, success: true});
     }
 })
 
+//Employee List
+app.get("/list-personnel", (req, res) => {
+    console.table(employeeModel.list);
+    res.render("employee-list", {pageTitle: "Liste des Personnels"});
+})
+
+//New Employee
+app.get("/nouveau-personnel", (req,res) => {
+    res.render("new-employee", {pageTitle: "Nouveau Personnel"});
+})
 
 //Leave History
 app.get("/historique", (req,res) => {

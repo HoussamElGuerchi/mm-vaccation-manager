@@ -2,13 +2,15 @@
 
     <div class="container mt-4 p-2 content">
         <h1 class="mt-4 mb-4">Historique des Congés</h1>
-        <table class="table">
+        <table class="table table-bordered table-hover shadow-sm">
             <thead class="thead-dark">
                 <tr>
                     <th>Matricule</th>
                     <th>Du</th>
                     <th>Au</th>
                     <th>Nature</th>
+                    <th>Nombre de jours</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -18,6 +20,12 @@
                         <td><%= leave.startDate %> </td>
                         <td><%= leave.endDate %> </td>
                         <td><%= leave.type %> </td>
+                        <td><%= leave.numberOfDays %> jours </td>
+                        <td>
+                            <form action="/" method="POST">
+                                <button class="btn btn-link" type="submit">Imprimer</button>
+                            </form>
+                        </td>
                     </tr>
                 <% }) %> 
             </tbody>

@@ -1,0 +1,41 @@
+<%- include("partials/header") %>
+    <div class="container mt-4 p-2 content">
+      <h1>Liste des Personnels</h1>
+
+      <div class="row">
+        <div class="col-lg-10">
+            <form class="form">
+              <div class="row">
+                <div class="col">
+                  <input class="form-control mr-2" type="search" placeholder="Matricule" aria-label="Search">
+                </div>
+                <div class="col">
+                  <button class="btn btn-outline-primary" type="submit"> <i class="fas fa-search"></i> Chercher</button>
+                </div>
+              </div>
+            </form>
+        </div>
+
+        <div class="col">
+          <a href="/nouveau-personnel"><i class="fas fa-plus"></i> Nouveau Personnel</a>
+        </div>
+      </div>
+
+      <table class="table table-bordered table-hover shadow-sm">
+          <thead class="thead-dark">
+              <tr>
+                  <th>Matricule</th>
+                  <th>Nom</th>
+                  <th>Prenom</th>
+                  <th>Date de Naissance</th>
+                  <th>Fonction</th>
+                  <th>Entité</th>
+                  <th>Action</th>
+              </tr>
+          </thead>
+          <tbody>
+              <!-- Data here -->
+          </tbody>
+      </table>
+    </div>
+<%- include("partials/footer") %>
