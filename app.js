@@ -3,7 +3,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const _ = require("lodash");
 const date = require(__dirname + "/date.js");
-const employeeModel = require(__dirname + "/models/employee.js");
+// const employeeModel = require(__dirname + "/models/employee.js");
+const mongoose = require("mongoose");
 
 const app = express();
 
@@ -13,7 +14,33 @@ app.use(express.static("public"));
 
 const leaveList = [];
 
-/***** Variables & functions Declaration *****/
+/***** Database Manipulation *****/
+
+let list = [];
+
+mongoose.connect('mongodb://localhost:27017/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true});
+
+const employeeSchema = new mongoose.Schema({
+    matricule: {type: String, required: true},
+    nom: {type: String, required: true},
+    prenom: {type: String, required: true},
+    dateDeNaissance: {type: String, required: true},
+    fonction: {type: String, required: true},
+    entite: {type: String, required: true},
+})
+
+const Employee = new mongoose.model("Personnel", employeeSchema);
+
+Employee.find((err, employees) => {
+    if (err) {
+        console.log(err);
+    } else {
+        mongoose.connection.close();
+        employees.forEach(employee => {
+            list.push(employee);
+        });
+    }
+})
 
 /*********************************/
 
@@ -60,8 +87,7 @@ app.post("/nouveau-conge", (req, res) => {
 
 //Employee List
 app.get("/list-personnel", (req, res) => {
-    console.table(employeeModel.list);
-    res.render("employee-list", {pageTitle: "Liste des Personnels"});
+    res.render("employee-list", {pageTitle: "Liste des Personnels", employees: list});
 })
 
 //New Employee

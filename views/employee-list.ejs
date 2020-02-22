@@ -1,7 +1,8 @@
 <%- include("partials/header") %>
-    <div class="container mt-4 p-2 content">
-      <h1>Liste des Personnels</h1>
 
+    <div class="container mt-4 p-2 content emp-list">
+      <h1>Liste des Personnels</h1>
+      <hr>
       <div class="row">
         <div class="col-lg-10">
             <form class="form">
@@ -20,8 +21,8 @@
           <a href="/nouveau-personnel"><i class="fas fa-plus"></i> Nouveau Personnel</a>
         </div>
       </div>
-
-      <table class="table table-bordered table-hover shadow-sm">
+      <hr>
+      <table class="table table-bordered table-hover shadow">
           <thead class="thead-dark">
               <tr>
                   <th>Matricule</th>
@@ -35,7 +36,23 @@
           </thead>
           <tbody>
               <!-- Data here -->
+              <% employees.forEach(employee => { %>
+                <tr>
+                  <td><%= employee.matricule %> </td>
+                  <td><%= employee.nom %> </td>
+                  <td><%= employee.prenom %> </td>
+                  <td><%= employee.dateDeNaissance %> </td>
+                  <td><%= employee.fonction %> </td>
+                  <td><%= employee.entite %> </td>
+                  <td>
+                    <a href="#">Modifier</a>
+                      <a href="#">Supprimer</a>
+                      <a href="#">Congés</a>
+                  </td>
+                </tr>
+              <% }) %>
           </tbody>
       </table>
     </div>
+
 <%- include("partials/footer") %>

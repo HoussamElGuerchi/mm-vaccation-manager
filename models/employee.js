@@ -25,8 +25,9 @@ Employee.find((err, employees) => {
     } else {
         mongoose.connection.close();
         employees.forEach(employee => {
-            console.log(employee);
+            list.push(employee);
         });
+        console.log(list);
     }
 })
 
