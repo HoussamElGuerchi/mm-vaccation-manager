@@ -5,10 +5,10 @@
       <hr>
       <div class="row">
         <div class="col-lg-10">
-            <form class="form">
+            <form action="/list-personnel" method="POST" class="form">
               <div class="row">
                 <div class="col">
-                  <input class="form-control mr-2" type="search" placeholder="Matricule" aria-label="Search">
+                  <input class="form-control mr-2" type="text" name="searchedMatricule" placeholder="Matricule" aria-label="Search" required autocomplete="off">
                 </div>
                 <div class="col">
                   <button class="btn btn-outline-primary" type="submit"> <i class="fas fa-search"></i> Chercher</button>
@@ -22,37 +22,48 @@
         </div>
       </div>
       <hr>
-      <table class="table table-bordered table-hover shadow">
-          <thead class="thead-dark">
-              <tr>
-                  <th>Matricule</th>
-                  <th>Nom</th>
-                  <th>Prenom</th>
-                  <th>Date de Naissance</th>
-                  <th>Fonction</th>
-                  <th>Entité</th>
-                  <th>Action</th>
-              </tr>
-          </thead>
-          <tbody>
-              <!-- Data here -->
-              <% employees.forEach(employee => { %>
+      <% if (employees.length === 0) { %>
+        <div class="alert alert-secondary fade show" role="alert">
+          Aucun personnel trouvé.
+      </div>
+      <% } else {  %>
+       
+        <table class="table table-bordered table-hover shadow">
+            <thead class="thead-dark">
                 <tr>
-                  <td><%= employee.matricule %> </td>
-                  <td><%= employee.nom %> </td>
-                  <td><%= employee.prenom %> </td>
-                  <td><%= employee.dateDeNaissance %> </td>
-                  <td><%= employee.fonction %> </td>
-                  <td><%= employee.entite %> </td>
-                  <td>
-                    <a href="#">Modifier</a>
-                      <a href="#">Supprimer</a>
-                      <a href="#">Congés</a>
-                  </td>
+                    <th>Matricule</th>
+                    <th>Nom</th>
+                    <th>Prenom</th>
+                    <th>Date de Naissance</th>
+                    <th>Fonction</th>
+                    <th>Entité</th>
+                    <th>Action</th>
                 </tr>
-              <% }) %>
-          </tbody>
-      </table>
+            </thead>
+            <tbody>
+                <!-- Data here -->
+                <% employees.forEach(employee => { %>
+                  <tr>
+                    <td><%= employee.matricule %> </td>
+                    <td><%= employee.nom %> </td>
+                    <td><%= employee.prenom %> </td>
+                    <td><%= employee.dateDeNaissance %> </td>
+                    <td><%= employee.fonction %> </td>
+                    <td><%= employee.entite %> </td>
+                    <td>
+                      <form action="">
+                          <button type="submit" class="btn btn-link m-0" value="<%= employee._id %>">Congés</button>
+                      </form>
+                      <form action="/supprimer/<%= employee._id %>" method="POST">
+                        <button type="submit" class="btn btn-link m-0" name="empToDelete" value="<%= employee._id %>">Supprimer</button>
+                      </form>
+                    </td>
+                  </tr>
+                <% }) %>
+            </tbody>
+        </table>
+
+      <% }%>
     </div>
 
 <%- include("partials/footer") %>

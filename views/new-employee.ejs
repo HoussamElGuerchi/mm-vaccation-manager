@@ -2,7 +2,7 @@
 
     <div class="container container mt-4 p-2 content">
         <h1 class="mt-4">Nouveau Personnel:</h1>
-        <form action="" class="p-5">
+        <form action="/nouveau-personnel" method="POST" class="pl-2 pr-2">
             <div class="form-group">
                 <label for="">Matricule :</label>
                 <input type="text" class="form-control" name="matricul" required autocomplete="off">
@@ -44,6 +44,10 @@
                 <a  class="btn btn-outline-danger m-2" href="/list-personnel">Annuler</a>
             </div>
         </form>
+
+        <% if (alert) { %>
+            <%- include("partials/alerts-handler") %> 
+        <% } %>
     </div>
 
 <%- include("partials/footer") %> 

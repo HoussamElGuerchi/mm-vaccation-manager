@@ -35,7 +35,6 @@ Employee.find((err, employees) => {
     if (err) {
         console.log(err);
     } else {
-        mongoose.connection.close();
         employees.forEach(employee => {
             list.push(employee);
         });
@@ -65,12 +64,16 @@ app.get("/", (req, res) => {
 
 //Leave form
 app.get("/nouveau-conge", (req, res) => {
-    res.render("leave-form", {pageTitle: "Nouveau Congé", error: false, success: false});
+    res.render("leave-form", {pageTitle: "Nouveau Congé", alert: null});
 })
 
 app.post("/nouveau-conge", (req, res) => {
     if (req.body.startDate > req.body.endDate) {
-        res.render("leave-form", {pageTitle: "Nouveau Congé", error: true, success: false});
+        const alert = {
+            type: "danger",
+            message: "Période du congé invalide, veuillez vérifier la date de début et de la fin du congé."
+        }
+        res.render("leave-form", {pageTitle: "Nouveau Congé", alert: alert});
     } else {
         const newLeave = {
             employeeId: req.body.employeeId,
@@ -81,7 +84,12 @@ app.post("/nouveau-conge", (req, res) => {
         }
         
         leaveList.push(newLeave);
-        res.render("leave-form", {pageTitle: "Nouveau Congé", error: false, success: true});
+
+        const alert = {
+            type: "success",
+            message: "Congé ajouter avec succès."
+        }
+        res.render("leave-form", {pageTitle: "Nouveau Congé", alert: alert});
     }
 })
 
@@ -90,9 +98,76 @@ app.get("/list-personnel", (req, res) => {
     res.render("employee-list", {pageTitle: "Liste des Personnels", employees: list});
 })
 
+app.post("/list-personnel", (req,res) => {
+    const searchedMatricule = req.body.searchedMatricule;
+    
+    Employee.find({matricule: searchedMatricule.toUpperCase()}, (err,result) => {
+        if (!err) {
+            res.render("employee-list", {pageTitle: "Liste des Personnels", employees: result});
+        }
+    })
+
+})
+
+app.post("/supprimer/:empId", (req,res) => {
+    const employeeId = req.body.empToDelete;
+    
+    Employee.findByIdAndRemove({_id: employeeId}, (err) => {
+        if (err) {
+            console.log(err);
+            
+        } else {
+            console.log("Employee deleted");
+            res.redirect("/list-personnel")
+        }
+    })
+
+})
+
 //New Employee
 app.get("/nouveau-personnel", (req,res) => {
-    res.render("new-employee", {pageTitle: "Nouveau Personnel"});
+    res.render("new-employee", {pageTitle: "Nouveau Personnel", alert: null});
+})
+
+app.post("/nouveau-personnel", (req,res) => {
+    const empMatricule = req.body.matricul.toUpperCase();
+
+    Employee.findOne({matricule: empMatricule}, (err,foundEmployee) =>{
+        if (err) {
+            const alert = {
+                type: "danger",
+                message: err
+            }
+            res.render("new-employee", {pageTitle: "Nouveau Personnel", alert: alert});
+        } else {
+            if (foundEmployee) {
+                const alert = {
+                    type: "danger",
+                    message: "Un personnel existant est trouvé avec le même matricule"
+                }
+
+                res.render("new-employee", {pageTitle: "Nouveau Personnel", alert: alert});
+            } else {
+                const newEmployee = new Employee({
+                    matricule: req.body.matricul.toUpperCase(),
+                    nom: _.upperCase(req.body.lastName),
+                    prenom: _.upperCase(req.body.firstName),
+                    dateDeNaissance: req.body.birthDate,
+                    fonction: _.capitalize(req.body.function),
+                    entite: _.capitalize(req.body.entity)
+                })
+
+                newEmployee.save();
+
+                const alert = {
+                    type: "success",
+                    message: "Le nouveau personnel est ajouté avec succès"
+                }
+                res.render("new-employee", {pageTitle: "Nouveau Personnel", alert: alert});
+            }
+        }
+    })
+    
 })
 
 //Leave History
