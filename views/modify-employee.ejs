@@ -1,0 +1,49 @@
+<%- include("partials/header") %> 
+
+    <div class="container content mt-5">
+        <h1>Modification :</h1>
+        <form action="/modifier-personnel/<%= employee._id %> " method="POST">
+            <div class="form-group">
+                <label for="">Matricule :</label>
+                <input type="text" class="form-control" name="matricul" required autocomplete="off" value="<%= employee.matricule %>">
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="">Nom :</label>
+                        <input type="text" class="form-control" name="lastName" required autocomplete="off" value="<%= employee.nom %>">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="">Prénom :</label>
+                        <input type="text" class="form-control" name="firstName" required autocomplete="off" value="<%= employee.prenom %>">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="">Date de Naissance :</label>
+                <input type="date" class="form-control" name="birthDate" required autocomplete="off" value="<%= employee.dateDeNaissance %>">
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="">Fonction :</label>
+                        <input type="text" class="form-control" name="function" required autocomplete="off" value="<%= employee.fonction %>">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="">Entité :</label>
+                        <input type="text" class="form-control" name="entity" required autocomplete="off" value="<%= employee.entite %>">
+                    </div>
+                </div>
+            </div>
+            <div class="container center p-3">
+                <button class="btn btn-success m-2" >Mettre À Jour</button>
+                <a  class="btn btn-outline-danger m-2" href="/personnel/<%= employee._id %>">Annuler</a>
+            </div>
+        </form>
+    </div>
+
+<%- include("partials/footer") %> 

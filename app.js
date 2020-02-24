@@ -100,6 +100,7 @@ app.post("/list-personnel", (req,res) => {
     })
 })
 
+//Employee profile
 app.get("/personnel/:empId", (req,res) => {
     const empId = req.params.empId;
 
@@ -124,6 +125,34 @@ app.post("/personnel/:empId", (req,res) => {
         }
     })
     
+})
+
+//Employee edit
+app.get("/modifier-personnel/:empId", (req,res) => {
+    const employeeId = req.params.empId;
+    
+    Employee.findById(employeeId, (err, foundEmployee) => {
+        if (!err) {
+            res.render("modify-employee", {pageTitle: "Modification", employee: foundEmployee})
+        }
+    })
+})
+
+app.post("/modifier-personnel/:empId", (req,res) => {
+    const employeeId = req.params.empId;
+    
+    Employee.findByIdAndUpdate(employeeId, {
+        matricule: req.body.matricul,
+        nom: req.body.lastName,
+        prenom: req.body.firstName,
+        dateDeNaissance: req.body.birthDate,
+        fonction: req.body.function,
+        entite: req.body.entity
+    }, (err) => {
+        if (!err) {
+            res.redirect("/personnel/"+employeeId);
+        }
+    })
 })
 
 //New Employee
