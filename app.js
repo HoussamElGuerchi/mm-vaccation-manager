@@ -16,9 +16,7 @@ const leaveList = [];
 
 /***** Database Manipulation *****/
 
-let list = [];
-
-mongoose.connect('mongodb://localhost:27017/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect('mongodb://localhost:27017/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 
 const employeeSchema = new mongoose.Schema({
     matricule: {type: String, required: true},
@@ -30,16 +28,6 @@ const employeeSchema = new mongoose.Schema({
 })
 
 const Employee = new mongoose.model("Personnel", employeeSchema);
-
-Employee.find((err, employees) => {
-    if (err) {
-        console.log(err);
-    } else {
-        employees.forEach(employee => {
-            list.push(employee);
-        });
-    }
-})
 
 /*********************************/
 
@@ -95,33 +83,47 @@ app.post("/nouveau-conge", (req, res) => {
 
 //Employee List
 app.get("/list-personnel", (req, res) => {
-    res.render("employee-list", {pageTitle: "Liste des Personnels", employees: list});
+    Employee.find((err,employeeList) => {
+        if (!err) {
+            res.render("employee-list", {pageTitle: "Liste des Personnels", employees: employeeList});
+        }
+    })
 })
 
 app.post("/list-personnel", (req,res) => {
     const searchedMatricule = req.body.searchedMatricule;
-    
     Employee.find({matricule: searchedMatricule.toUpperCase()}, (err,result) => {
-        if (!err) {
+        if (err) {
             res.render("employee-list", {pageTitle: "Liste des Personnels", employees: result});
         }
+        res.render("employee-list", {pageTitle: "Liste des Personnels", employees: result});
     })
-
 })
 
-app.post("/supprimer/:empId", (req,res) => {
-    const employeeId = req.body.empToDelete;
-    
-    Employee.findByIdAndRemove({_id: employeeId}, (err) => {
-        if (err) {
-            console.log(err);
-            
-        } else {
-            console.log("Employee deleted");
-            res.redirect("/list-personnel")
+app.get("/personnel/:empId", (req,res) => {
+    const empId = req.params.empId;
+
+    Employee.findById(empId, (err, foundEmployee) => {
+        if(!err) {
+            if (foundEmployee) {
+                res.render("employee-profile", {pageTitle: "Personnel", employee: foundEmployee});
+            }
         }
     })
+    
+})
 
+app.post("/personnel/:empId", (req,res) => {
+    const empId = req.params.empId;
+
+    Employee.findByIdAndRemove(empId, (err) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.redirect("/list-personnel");
+        }
+    })
+    
 })
 
 //New Employee

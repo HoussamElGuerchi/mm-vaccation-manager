@@ -1,0 +1,45 @@
+<%- include("partials/header") %>
+
+    <div class="container mt-5 mb-5">
+        <div class="row m-4">
+            <div class="col-lg-3">
+                <img src="/images/avatar.png" class="card-img-top" style="width: 150px;">
+            </div>
+            <div class="col">
+                <div class="container content">
+                    <h1><%= employee.nom %> <%= employee.prenom %> </h1>
+                    <h3><%= employee.matricule %></h3>
+                    <h5><%= employee.fonction %>, <%= employee.entite %></h5>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="container content m-4">
+            <h2>Reliquats:</h2>
+            <table class="table table-borderless" style="width: 30%;">
+                <tbody>
+                    <tr>
+                        <td>Départs autorisés :</td>
+                        <td>4</td>
+                    </tr>
+                    <tr>
+                        <td>Droit Restant 2019 :</td>
+                        <td>2</td>
+                    </tr>
+                    <tr>
+                        <td>Droit Restant 2020 :</td>
+                        <td>25</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <hr>
+        <div class="container">
+            <form action="/personnel/<%= employee._id %> " method="POST">
+                <a href="#" class="btn btn-dark m-2">Modifier</a>
+                <button class="btn btn-outline-danger m-2">Supprimer</button>
+            </form>
+        </div>
+    </div>
+
+<%- include("partials/footer") %> 
