@@ -2,6 +2,9 @@
 
     <div class="container mt-4 p-2 content">
         <h1 class="mt-4 mb-4">Historique des Congés</h1>
+        <a href="#list-header" class="float">
+            <i class="fas fa-arrow-up my-float"></i>
+        </a>
         <table class="table table-bordered table-hover shadow-sm">
             <thead class="thead-dark">
                 <tr>
@@ -16,7 +19,7 @@
             <tbody>
                 <% leaveList.forEach(leave => { %>
                     <tr>
-                        <td><%= leave.employeeId %> </td>
+                        <td><%= leave.matricule %></td>
                         <td><%= leave.startDate %> </td>
                         <td><%= leave.endDate %> </td>
                         <td><%= leave.type %> </td>

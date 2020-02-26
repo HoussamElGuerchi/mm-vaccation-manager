@@ -29,6 +29,16 @@ const employeeSchema = new mongoose.Schema({
 
 const Employee = new mongoose.model("Personnel", employeeSchema);
 
+const leaveSchema = new mongoose.Schema({
+    matricule: {type: String, required: true},
+    startDate: {type: String, required: true},
+    endDate: {type: String, required: true},
+    type: {type: String, required: true},
+    numberOfDays: {type: Number, required: true}
+})
+
+const Leave = new mongoose.model("Leave", leaveSchema);
+
 /*********************************/
 
 // Authentication Page
@@ -63,22 +73,54 @@ app.post("/nouveau-conge", (req, res) => {
         }
         res.render("leave-form", {pageTitle: "Nouveau Congé", alert: alert});
     } else {
-        const newLeave = {
-            employeeId: req.body.employeeId,
-            startDate: req.body.startDate,
-            endDate: req.body.endDate,
-            type: req.body.leaveType,
-            numberOfDays: date.calculDays(req.body.startDate, req.body.endDate)
-        }
-        
-        leaveList.push(newLeave);
+        const empMatricule = req.body.employeeId.toUpperCase();
 
-        const alert = {
-            type: "success",
-            message: "Congé ajouter avec succès."
-        }
-        res.render("leave-form", {pageTitle: "Nouveau Congé", alert: alert});
+        Employee.findOne({matricule: empMatricule}, (err,result) => {
+            if (err) {
+                const errAlert = {
+                    type: "danger",
+                    message: err
+                }
+                res.render("leave-form", {pageTitle: "Nouveau Congé", alert: errAlert});
+            } else {
+                if (!result) {
+                    const noResult = {
+                        type: "danger",
+                        message: "Le matricule ne correspond à aucun personnel."
+                    }
+                    res.render("leave-form", {pageTitle: "Nouveau Congé", alert: noResult});
+                } else {
+                    const newLeave = Leave({
+                        matricule: empMatricule,
+                        startDate: req.body.startDate,
+                        endDate: req.body.endDate,
+                        type: req.body.leaveType,
+                        numberOfDays: date.calculDays(req.body.startDate, req.body.endDate)
+                    });
+                    
+                    newLeave.save();
+
+                    const successAlert = {
+                        type: "success",
+                        message: "Congé ajouter avec succès."
+                    }
+                    res.render("leave-form", {pageTitle: "Nouveau Congé", alert: successAlert});
+                }
+            }
+        })
     }
+})
+
+//Leave History
+app.get("/historique", (req,res) => {
+    Leave.find((err, leaveList) => {
+        if (err) {
+            console.log(err);
+            
+        } else {
+            res.render("leave-history", ({pageTitle: "Historique des Congés", leaveList}));
+        }
+    })
 })
 
 //Employee List
@@ -107,7 +149,7 @@ app.get("/personnel/:empId", (req,res) => {
     Employee.findById(empId, (err, foundEmployee) => {
         if(!err) {
             if (foundEmployee) {
-                res.render("employee-profile", {pageTitle: "Personnel", employee: foundEmployee});
+                res.render("employee-profile", {pageTitle: "Personnel", employee: foundEmployee, alert: null});
             }
         }
     })
@@ -119,7 +161,11 @@ app.post("/personnel/:empId", (req,res) => {
 
     Employee.findByIdAndRemove(empId, (err) => {
         if (err) {
-            console.log(err);
+            const alert = {
+                type: "danger",
+                message: err
+            };
+            res.render("employee-profile", {pageTitle: "Personnel", employee: foundEmployee, alert: alert});
         } else {
             res.redirect("/list-personnel");
         }
@@ -132,8 +178,14 @@ app.get("/modifier-personnel/:empId", (req,res) => {
     const employeeId = req.params.empId;
     
     Employee.findById(employeeId, (err, foundEmployee) => {
-        if (!err) {
-            res.render("modify-employee", {pageTitle: "Modification", employee: foundEmployee})
+        if (err) {
+            const errAlert = {
+                type: "danger",
+                message: err
+            }
+            res.render("modify-employee", {pageTitle: "Modification", employee: foundEmployee, alert: errAlert});
+        } else {
+            res.render("modify-employee", {pageTitle: "Modification", employee: foundEmployee, alert: null});
         }
     })
 })
@@ -149,7 +201,13 @@ app.post("/modifier-personnel/:empId", (req,res) => {
         fonction: req.body.function,
         entite: req.body.entity
     }, (err) => {
-        if (!err) {
+        if (err) {
+            const errAlert = {
+                type: "danger",
+                message: err
+            }
+            res.render("modify-employee", {pageTitle: "Modification", employee: foundEmployee, alert: errAlert});
+        } else {
             res.redirect("/personnel/"+employeeId);
         }
     })
@@ -199,11 +257,6 @@ app.post("/nouveau-personnel", (req,res) => {
         }
     })
     
-})
-
-//Leave History
-app.get("/historique", (req,res) => {
-    res.render("leave-history", ({pageTitle: "Historique des Congés", leaveList}));
 })
 
 //Error Page

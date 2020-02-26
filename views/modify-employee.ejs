@@ -5,7 +5,7 @@
         <form action="/modifier-personnel/<%= employee._id %> " method="POST">
             <div class="form-group">
                 <label for="">Matricule :</label>
-                <input type="text" class="form-control" name="matricul" required autocomplete="off" value="<%= employee.matricule %>">
+                <input type="text" class="form-control" name="matricul" required autocomplete="off" value="<%= employee.matricule %>" readonly>
             </div>
             <div class="row">
                 <div class="col">
@@ -44,6 +44,9 @@
                 <a  class="btn btn-outline-danger m-2" href="/personnel/<%= employee._id %>">Annuler</a>
             </div>
         </form>
+        <% if (alert) { %>
+            <%- include("partials/alerts-handler") %> 
+        <% } %>
     </div>
 
 <%- include("partials/footer") %> 
