@@ -34,14 +34,23 @@
                 <li class="nav-item mr-3">
                         <a class="nav-link" href="/accueil"><i class="fas fa-home mr-1"></i>  Accueil</a>
                 </li>
-                <li class="nav-item mr-3">
-                    <a class="nav-link" href="/nouveau-conge">Nouveau Congé</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Nouveau Congé
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <a class="dropdown-item" href="/nouveau-conge-admin">Administratif</a>
+                      <a class="dropdown-item" href="/nouveau-conge-excep">Exceptionnel</a>
+                    </div>
                 </li>
                 <li class="nav-item mr-3">
                     <a class="nav-link" href="/list-personnel">Liste des Personnels</a>
                 </li>
                 <li class="nav-item mr-3">
                     <a class="nav-link" href="/historique">Historique des Congés</a>
+                </li>
+                <li class="nav-item mr-3">
+                    <a class="nav-link" href="/reliquats">Reliquats</a>
                 </li>
                 <button class="btn btn-outline-dark mr-3">Déconnexion <i class="fas fa-sign-out-alt"></i></button>
             </ul>

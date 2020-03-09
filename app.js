@@ -25,19 +25,31 @@ const employeeSchema = new mongoose.Schema({
     dateDeNaissance: {type: String, required: true},
     fonction: {type: String, required: true},
     entite: {type: String, required: true},
+    departsAutorisees: {type: String, required: true},
+    droitN_1: {type: String, required: true},
+    droitN: {type: String, required: true}
 })
 
 const Employee = new mongoose.model("Personnel", employeeSchema);
 
 const leaveSchema = new mongoose.Schema({
+    empId: {type: String, required: true},
     matricule: {type: String, required: true},
     startDate: {type: String, required: true},
     endDate: {type: String, required: true},
+    numberOfDays: {type: Number},
     type: {type: String, required: true},
-    numberOfDays: {type: Number, required: true}
 })
 
 const Leave = new mongoose.model("Leave", leaveSchema);
+
+const holidaySchema = new mongoose.Schema({
+    title: {type: String, required: true},
+    date: {type: String, required: true},
+    duration: {type: Number, required: true}
+})
+
+const Holiday = new mongoose.model("Holiday", holidaySchema);
 
 /*********************************/
 
@@ -61,8 +73,8 @@ app.get("/", (req, res) => {
 });
 
 //Leave form
-app.get("/nouveau-conge", (req, res) => {
-    res.render("leave-form", {pageTitle: "Nouveau Congé", alert: null});
+app.get("/nouveau-conge-admin", (req, res) => {
+    res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: null});
 })
 
 app.post("/nouveau-conge", (req, res) => {
@@ -111,16 +123,27 @@ app.post("/nouveau-conge", (req, res) => {
     }
 })
 
+app.get("/nouveau-conge-excep", (req, res) => {
+    res.render("leave-form-excep", {pageTitle: "Nouveau Congé", alert: null});
+})
+
+app.post("/nouveau-conge-excep", (req, res) => {
+    res.render("leave-form-excep", {pageTitle: "Nouveau Congé", alert: null});
+})
+
 //Leave History
 app.get("/historique", (req,res) => {
     Leave.find((err, leaveList) => {
         if (err) {
             console.log(err);
-            
         } else {
             res.render("leave-history", ({pageTitle: "Historique des Congés", leaveList}));
         }
     })
+})
+
+app.post("/historique", (req,res) => {
+    
 })
 
 //Employee List
@@ -134,6 +157,7 @@ app.get("/list-personnel", (req, res) => {
 
 app.post("/list-personnel", (req,res) => {
     const searchedMatricule = req.body.searchedMatricule;
+    
     Employee.find({matricule: searchedMatricule.toUpperCase()}, (err,result) => {
         if (err) {
             res.render("employee-list", {pageTitle: "Liste des Personnels", employees: result});
@@ -199,7 +223,10 @@ app.post("/modifier-personnel/:empId", (req,res) => {
         prenom: req.body.firstName,
         dateDeNaissance: req.body.birthDate,
         fonction: req.body.function,
-        entite: req.body.entity
+        entite: req.body.entity,
+        departsAutorisees: req.body.authorizedDeaprture,
+        droitN_1: req.body.rightsN_1,
+        droitN: req.body.rightsN
     }, (err) => {
         if (err) {
             const errAlert = {
@@ -257,6 +284,73 @@ app.post("/nouveau-personnel", (req,res) => {
         }
     })
     
+})
+
+// Reliquats
+
+app.get("/reliquats", (req,res) => {
+
+    const reliquats = [];
+
+    Employee.find((err,result) => {
+        if (!err) {
+            result.forEach(emp => {
+                const reliquat = {
+                    rid: emp._id,
+                    matricule: emp.matricule,
+                    departs: emp.departsAutorisees,
+                    droitN_1: emp.droitN_1,
+                    droitN: emp.droitN
+                }
+
+                reliquats.push(reliquat);
+            })
+        }
+        res.render("reliquats", {pageTitle: "Reliquats", reliquats: reliquats});
+    })
+})
+
+// Test
+app.get("/duration", (req,res) => {
+    res.render("duration", {pageTitle: "Test duration", duration: null});
+})
+
+app.post("/duration", (req,res) => {
+    // Create begining and end dates
+    const start = new Date(req.body.startDate);
+    const end = new Date(req.body.endDate);
+
+    // Calculate duration betwen the begining and the end 
+    let days = date.calculDays(start, end);
+
+    // Retrieve holidays from database
+    const holidays = [];
+
+    // Holiday.find((err, result) => {
+    //     if (err) {
+    //         console.log(err);
+    //     } else {
+    //         result.forEach(holiday => {
+    //             let hldy = {
+
+    //             }
+    //         })
+    //     }
+    // })
+
+    // Ignore sundays and holidays from leave period
+    for (let i=0; i<=days; i++) {
+        const dayIndex = start.getDay();
+
+        if (dayIndex === 0) {
+            days--;
+        }
+
+        // console.log(dayIndex);
+        start.setDate(start.getDate()+1);
+    }
+    
+    res.render("duration", {pageTitle: "Test duration", duration: days});
 })
 
 //Error Page

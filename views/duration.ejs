@@ -1,0 +1,12 @@
+<%- include("partials/header") %> 
+    <div class="container mt-5 p-5">
+        <form action="/duration" method="POST">
+            <input type="date" name="startDate" class="form-control m-3">
+            <input type="date" name="endDate" class="form-control m-3">
+            <button class="btn btn-outline-dark rounded-0 m-3">Calculate</button>
+        </form>
+        <% if (duration) { %>
+            <h1 class="mt-5"><%= duration %> </h1>
+        <% } %>
+    </div>
+<%- include("partials/footer") %> 

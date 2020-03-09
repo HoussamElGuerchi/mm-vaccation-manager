@@ -1,0 +1,28 @@
+<%- include("partials/header") %> 
+
+    <div class="container content">
+        <h1 class="mt-5">Reliquats</h1>
+        <% const today = new Date() %> 
+        <table class="table table-bordered table-hover shadow-sm">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Matricule</th>
+                    <th>Départs Autorisées</th>
+                    <th>Droit <%= today.getFullYear()-1 %></th>
+                    <th>Droit <%= today.getFullYear() %></th>
+                </tr>
+            </thead>
+            <tbody>
+                <% reliquats.forEach(rlqt => { %>
+                    <tr>
+                        <td><a href="/personnel/<%= rlqt.rid %>"><%= rlqt.matricule %></a></td>
+                        <td><%= rlqt.departs %> </td>
+                        <td><%= rlqt.droitN_1 %> </td>
+                        <td><%= rlqt.droitN %> </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+
+<%- include("partials/footer") %> 

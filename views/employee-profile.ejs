@@ -16,19 +16,15 @@
         <hr>
         <div class="container content m-4">
             <h2>Reliquats:</h2>
-            <table class="table table-borderless" style="width: 30%;">
+            <table class="table table-bordered">
                 <tbody>
                     <tr>
                         <td>Départs autorisés :</td>
-                        <td>4</td>
-                    </tr>
-                    <tr>
-                        <td>Droit Restant 2019 :</td>
-                        <td>2</td>
-                    </tr>
-                    <tr>
-                        <td>Droit Restant 2020 :</td>
-                        <td>25</td>
+                        <td><%= employee.departsAutorisees %></td>
+                        <td>Droits Restants 2019 :</td>
+                        <td><%= employee.droitN_1 %></td>
+                        <td>Droits Restants 2020 :</td>
+                        <td><%= employee.droitN %></td>
                     </tr>
                 </tbody>
             </table>

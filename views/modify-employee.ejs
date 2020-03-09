@@ -39,8 +39,28 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="">Departs Autorisées :</label>
+                        <input type="text" class="form-control" name="authorizedDeaprture" required autocomplete="off" value="<%= employee.departsAutorisees %>">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="">Droits année précedent :</label>
+                        <input type="text" class="form-control" name="rightsN_1" required autocomplete="off" value="<%= employee.droitN_1 %>">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="">Droits année courant :</label>
+                        <input type="text" class="form-control" name="rightsN" required autocomplete="off" value="<%= employee.droitN %>">
+                    </div>
+                </div>
+            </div>
             <div class="container center p-3">
-                <button class="btn btn-success m-2" >Mettre À Jour</button>
+                <button class="btn btn-success m-2" >Confirmer</button>
                 <a  class="btn btn-outline-danger m-2" href="/personnel/<%= employee._id %>">Annuler</a>
             </div>
         </form>

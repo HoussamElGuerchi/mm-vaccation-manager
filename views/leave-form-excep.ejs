@@ -1,0 +1,41 @@
+<%- include("partials/header") %> 
+
+    <div class="container content mt-5">
+        <h1 class="mt-4">Nouveau Congé Exceptionnel:</h1>
+        <form action="/nouveau-conge" method="POST">
+            <div class="form-group">
+                <div class="form-group">
+                    <label for="">Matricule :</label>
+                    <input type="text" name="employeeId" class="form-control" required autocomplete="off" placeholder="Exemple: A01xxx">
+                </div>
+                <div class="form-group">
+                    <label for="">Date de debut :</label>
+                    <input type="date" name="startDate" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="">Nature :</label>
+                    <select name="leaveType" class="form-control">
+                        <option value="Maternite">Maternité</option>
+                        <option value="Maladie Professionnelles ou Accident de travail">Maladie Professionnelles ou Accident de travail</option>
+                        <option value="Mariage">Mariage</option>
+                        <option value="Naissance">Naissance</option>
+                        <option value="Deces">Décès</option>
+                        <option value="Circoncision">Circoncision</option>
+                        <option value="Hospitalisation du conjoint ou d'un enfant">Hospitalisation du conjoint ou d'un enfant</option>
+                    </select>
+                </div>
+            </div>
+            <div class="center p-3">
+                <button type="submit" class="btn btn-success m-2">Ajouter</button>
+                <button type="reset" class="btn btn-outline-danger m-2">Annuler</button>
+            </div>
+        </form>
+
+        <% if (alert) { %>
+            <%- include("partials/alerts-handler") %> 
+        <% } %>
+
+    </div>
+    
+
+<%- include("partials/footer") %> 
