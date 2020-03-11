@@ -3,6 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const _ = require("lodash");
 const date = require(__dirname + "/date.js");
+const puppeteer = require('puppeteer');
 // const employeeModel = require(__dirname + "/models/employee.js");
 const mongoose = require("mongoose");
 
@@ -11,8 +12,6 @@ const app = express();
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
-
-const leaveList = [];
 
 /***** Database Manipulation *****/
 
@@ -83,7 +82,7 @@ app.post("/nouveau-conge", (req, res) => {
             type: "danger",
             message: "Période du congé invalide, veuillez vérifier la date de début et de la fin du congé."
         }
-        res.render("leave-form", {pageTitle: "Nouveau Congé", alert: alert});
+        res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: alert});
     } else {
         const empMatricule = req.body.employeeId.toUpperCase();
 
@@ -93,16 +92,67 @@ app.post("/nouveau-conge", (req, res) => {
                     type: "danger",
                     message: err
                 }
-                res.render("leave-form", {pageTitle: "Nouveau Congé", alert: errAlert});
+                res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: errAlert});
             } else {
                 if (!result) {
                     const noResult = {
                         type: "danger",
                         message: "Le matricule ne correspond à aucun personnel."
                     }
-                    res.render("leave-form", {pageTitle: "Nouveau Congé", alert: noResult});
+                    res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: noResult});
                 } else {
                     const newLeave = Leave({
+                        matricule: empMatricule,
+                        startDate: req.body.startDate,
+                        endDate: req.body.endDate,
+                        type: "Administratif",
+                        numberOfDays: date.calculDays(req.body.startDate, req.body.endDate)
+                    });
+                    
+                    newLeave.save();
+
+                    const successAlert = {
+                        type: "success",
+                        message: "Congé ajouter avec succès."
+                    }
+                    res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: successAlert});
+                }
+            }
+        })
+    }
+})
+
+app.get("/nouveau-conge-excep", (req, res) => {
+    res.render("leave-form-excep", {pageTitle: "Nouveau Congé", alert: null});
+})
+
+app.post("/nouveau-conge-excep", (req, res) => {
+    if (req.body.startDate > req.body.endDate) {
+        const alert = {
+            type: "danger",
+            message: "Période du congé invalide, veuillez vérifier la date de début et de la fin du congé."
+        }
+        res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: alert});
+    } else {
+        const empMatricule = req.body.employeeId.toUpperCase();
+
+        Employee.findOne({matricule: empMatricule}, (err,result) => {
+            if (err) {
+                const errAlert = {
+                    type: "danger",
+                    message: err
+                }
+                res.render("leave-form-excep", {pageTitle: "Nouveau Congé", alert: errAlert});
+            } else {
+                if (!result) {
+                    const noResult = {
+                        type: "danger",
+                        message: "Le matricule ne correspond à aucun personnel."
+                    }
+                    res.render("leave-form-excep", {pageTitle: "Nouveau Congé", alert: noResult});
+                } else {
+                    const newLeave = Leave({
+                        empId: result._id,
                         matricule: empMatricule,
                         startDate: req.body.startDate,
                         endDate: req.body.endDate,
@@ -116,19 +166,11 @@ app.post("/nouveau-conge", (req, res) => {
                         type: "success",
                         message: "Congé ajouter avec succès."
                     }
-                    res.render("leave-form", {pageTitle: "Nouveau Congé", alert: successAlert});
+                    res.render("leave-form-excep", {pageTitle: "Nouveau Congé", alert: successAlert});
                 }
             }
         })
     }
-})
-
-app.get("/nouveau-conge-excep", (req, res) => {
-    res.render("leave-form-excep", {pageTitle: "Nouveau Congé", alert: null});
-})
-
-app.post("/nouveau-conge-excep", (req, res) => {
-    res.render("leave-form-excep", {pageTitle: "Nouveau Congé", alert: null});
 })
 
 //Leave History
@@ -137,13 +179,42 @@ app.get("/historique", (req,res) => {
         if (err) {
             console.log(err);
         } else {
-            res.render("leave-history", ({pageTitle: "Historique des Congés", leaveList}));
+            res.render("leave-history", ({pageTitle: "Historique des Congés", leaveList, alert: null}));
         }
     })
 })
 
 app.post("/historique", (req,res) => {
+    const searchedMatricule = req.body.searchedMatricule;
     
+    Leave.find({matricule: searchedMatricule.toUpperCase()}, (err,leaves) => {
+        if (err) {
+            const errAlert = {
+                type: "danger",
+                message: err
+            }
+            res.render("leave-history", {pageTitle: "Liste des Personnels", leaveList: leaves, alert: errAlert});
+        } else {
+            if (leaves.length === 0) {
+                const errAlert = {
+                    type: "warning",
+                    message: "Aucun personnel trouvé"
+                }
+                res.render("leave-history", {pageTitle: "Liste des Personnels", leaveList: leaves, alert: errAlert});
+            } else {
+                res.render("leave-history", {pageTitle: "Liste des Personnels", leaveList: leaves, alert: null});
+            }
+        }
+    })
+})
+
+//Titre conge
+app.get("/titre-conge-admin", (req,res) => {
+    res.render("titre-conge-admin");
+})
+
+app.get("/titre-conge-excep", (req,res) => {
+    res.render("titre-conge-excep");
 })
 
 //Employee List
@@ -320,23 +391,31 @@ app.post("/duration", (req,res) => {
     const start = new Date(req.body.startDate);
     const end = new Date(req.body.endDate);
 
+    let iteratorDate = start;
+    const leaveDates = [];
+
     // Calculate duration betwen the begining and the end 
     let days = date.calculDays(start, end);
 
+    //Save leave dates into an array
+    while (iteratorDate <= end) {
+        leaveDates.push(iteratorDate.toDateString());
+        iteratorDate.setDate(iteratorDate.getDate()+1);
+    }
+
     // Retrieve holidays from database
-    const holidays = [];
+    let holidays = [];
 
-    // Holiday.find((err, result) => {
-    //     if (err) {
-    //         console.log(err);
-    //     } else {
-    //         result.forEach(holiday => {
-    //             let hldy = {
-
-    //             }
-    //         })
-    //     }
-    // })
+    Holiday.find((err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            result.forEach(holiday => {
+                holidays.push(holiday.date);
+                console.log(holiday.date); 
+            });
+        }
+    })
 
     // Ignore sundays and holidays from leave period
     for (let i=0; i<=days; i++) {
@@ -346,11 +425,14 @@ app.post("/duration", (req,res) => {
             days--;
         }
 
-        // console.log(dayIndex);
         start.setDate(start.getDate()+1);
     }
     
+    console.table(leaveDates);
+    // console.table(holidays);
+
     res.render("duration", {pageTitle: "Test duration", duration: days});
+
 })
 
 //Error Page

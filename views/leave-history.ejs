@@ -5,10 +5,10 @@
         <hr>
         <div class="row">
         <div class="col-lg-10">
-            <form action="/list-personnel" method="POST" class="form">
+            <form action="/historique" method="POST" class="form">
                 <div class="row">
                 <div class="col">
-                    <input class="form-control mr-2" type="text" name="searchedMatricule" placeholder="Entrer le matricule à chercher..." aria-label="Search" required autocomplete="off">
+                    <input class="form-control mr-2" type="text" name="searchedMatricule" placeholder="Entrer la matricule à chercher..." aria-label="Search" required autocomplete="off">
                 </div>
                 <div class="col">
                     <button class="btn btn-outline-primary" type="submit"> <i class="fas fa-search"></i> Chercher</button>
@@ -20,34 +20,39 @@
         <a href="#list-header" class="float">
             <i class="fas fa-arrow-up my-float"></i>
         </a>
-        <table class="table table-bordered table-hover shadow-sm">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Matricule</th>
-                    <th>Du</th>
-                    <th>Au</th>
-                    <th>Nature</th>
-                    <th>Nombre de jours</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% leaveList.forEach(leave => { %>
+
+        <% if (alert) { %>
+            <%- include("partials/alerts-handler") %> 
+        <% } else { %>
+            <table class="table table-bordered table-hover shadow-sm">
+                <thead class="thead-dark">
                     <tr>
-                        <td><%= leave.matricule %></td>
-                        <td><%= leave.startDate %> </td>
-                        <td><%= leave.endDate %> </td>
-                        <td><%= leave.type %> </td>
-                        <td><%= leave.numberOfDays %> jours </td>
-                        <td>
-                            <form action="/" method="POST">
-                                <button class="btn btn-link" type="submit">Imprimer</button>
-                            </form>
-                        </td>
+                        <th>Matricule</th>
+                        <th>Du</th>
+                        <th>Au</th>
+                        <th>Nature</th>
+                        <th>Nombre de jours</th>
+                        <th>Action</th>
                     </tr>
-                <% }) %> 
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <% leaveList.forEach(leave => { %>
+                        <tr>
+                            <td><a href="/personnel/<%= leave.empId %> "><%= leave.matricule %></a></td>
+                            <td><%= leave.startDate %> </td>
+                            <td><%= leave.endDate %> </td>
+                            <td><%= leave.type %> </td>
+                            <td><%= leave.numberOfDays %> jours </td>
+                            <td>
+                                <form action="/nouveau-conge-excep" method="POST">
+                                    <button class="btn btn-link" type="submit">Imprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }) %> 
+                </tbody>
+            </table>
+        <% } %> 
     </div>
 
 <%- include("partials/footer") %> 

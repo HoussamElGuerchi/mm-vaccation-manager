@@ -1,0 +1,50 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Titre congé administratif</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container p-5">
+        <% let date = new Date() %>
+        <div class="p-2 border center mb-5">
+            <h3>TITRE DE CONGE EXCEPRTIONNEL</h3>
+            <h3>N°................/D/DRH/<%= date.getFullYear() %> </h3>
+        </div>
+
+        <div class="container mt-3 p-5 mb-5" style="text-align: left">
+            <div class="row">
+                <div class="col-lg-6"><p><b>Mr/Mme : </b></p></div>
+                <div class="col-lg-6"><b>Matricule : </b></div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6"><p><b>Fonction : </b></p></div>
+                <div class="col-lg-6"><p><b>Affectation : </b></p></div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <p><b>Est autorisé(e) de prendre un congé exceptionnel de : </b></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6"><p><b>Du : </b></p></div>
+                <div class="col-lg-6"><p><b>Au : </b></p></div>
+            </div>
+        </div>
+
+        <div class="container mt-3 mb-5">
+            <div class="container">
+                <p class="mb-5"><b>LE CHEF DE LA DIVISION DES</b><br><b>RESSOURCES HUMAINES</b></p>
+                <p><b>Z. INAJJARNE</b></p>
+            </div>
+        </div>
+
+        <div class="container mt-5" style="text-align: right">
+            <p>EN.DCE.PA.GRHS.1.0</p>
+        </div>
+    </div>
+</body>
+</html>

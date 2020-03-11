@@ -1,0 +1,89 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Titre congé administratif</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container p-5">
+        <% let date = new Date() %>
+        <div class="p-2 border center">
+            <h3>Titre de conge administratif</h3>
+            <h3>N°................/D/DRH/<%= date.getFullYear() %> </h3>
+        </div>
+        <table class="table table-borderless titre mt-5">
+            <tbody>
+                <tr>
+                    <th>Nombre de jours :</th>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th>Période de validité :</th>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th>Droit :</th>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th>Nature :</th>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th>Mr/Mme :</th>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th>Matricule :</th>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th>Fonction :</th>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th>Entité :</th>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="container mt-3" style="width: 70%;">
+            <div class="container chef ml-auto">
+                <p class="mb-5"><b>LE CHEF DE LA DIVISION DES</b><br><b>RESSOURCES HUMAINES</b></p>
+                <p><b>Z. INAJJARNE</b></p>
+            </div>
+        </div>
+        <div class="container content mb-5">
+            <table>
+                <table class="table table-borderless titre mt-3">
+                    <thead>
+                        <tr>
+                            <td>Reliquats</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>Départs autorisés <%= date.getFullYear() %> :</th>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th>Droit restant <%= date.getFullYear()-1 %> :</th>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th>Droit restant <%= date.getFullYear()%> :</th>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                    </table>
+            </table>
+        </div>
+        <div class="container titre mt-5" style="text-align: right">
+            <p>EN.DCE.PA.GRHS.1.0</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -50,3 +50,12 @@ form {
 .my-float{
 	margin-top:22px;
 }
+
+.titre {
+    width: 70%;
+    margin: auto;
+}
+
+.chef {
+    text-align: right;
+}
