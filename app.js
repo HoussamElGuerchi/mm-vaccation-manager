@@ -3,8 +3,9 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const _ = require("lodash");
 const date = require(__dirname + "/date.js");
-const puppeteer = require('puppeteer');
-// const employeeModel = require(__dirname + "/models/employee.js");
+var pdf = require('html-pdf');
+var fs = require('fs');
+const ejs = require("ejs");
 const mongoose = require("mongoose");
 
 const app = express();
@@ -386,7 +387,7 @@ app.get("/duration", (req,res) => {
     res.render("duration", {pageTitle: "Test duration", duration: null});
 })
 
-app.post("/duration", (req,res) => {
+/*app.post("/duration", (req,res) => {
     // Create begining and end dates
     const start = new Date(req.body.startDate);
     const end = new Date(req.body.endDate);
@@ -404,7 +405,7 @@ app.post("/duration", (req,res) => {
     }
 
     // Retrieve holidays from database
-    let holidays = [];
+    const holidays = [];
 
     Holiday.find((err, result) => {
         if (err) {
@@ -412,27 +413,38 @@ app.post("/duration", (req,res) => {
         } else {
             result.forEach(holiday => {
                 holidays.push(holiday.date);
-                console.log(holiday.date); 
             });
         }
-    })
 
-    // Ignore sundays and holidays from leave period
-    for (let i=0; i<=days; i++) {
-        const dayIndex = start.getDay();
-
-        if (dayIndex === 0) {
-            days--;
+        // Ignore sundays
+        for (let i=0; i<=leaveDates.length; i++) {
+            let date = new Date();
         }
 
-        start.setDate(start.getDate()+1);
-    }
-    
-    console.table(leaveDates);
-    // console.table(holidays);
+        console.log("|====== Holidays ======|");
+        console.table(holidays);
+        console.log("|==== Leave Period ====|");
+        console.table(leaveDates);
 
-    res.render("duration", {pageTitle: "Test duration", duration: days});
+        let days = leaveDates.length;
+        res.render("duration", {pageTitle: "Test duration", duration: days});
+    })
+})*/
 
+
+app.post("/duration", (req,res) => {
+
+    fs.readFile('./views/titre-conge-admin.ejs', 'utf8', function (err, content) {
+        if (err) {
+          return res.status(400).send({error: err});
+        }
+        
+        content = ejs.render("./views/titre-conge-admin.ejs");
+
+        pdf.create(content, {format: 'A4', orientation: 'portrait'}).toStream(function(err, stream){
+            stream.pipe(fs.createWriteStream('./certificate.pdf'));
+        });
+    });
 })
 
 //Error Page
