@@ -3,10 +3,11 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const _ = require("lodash");
 const date = require(__dirname + "/date.js");
-var pdf = require('html-pdf');
-var fs = require('fs');
+const pdf = require('html-pdf');
+const fs = require('fs');
 const ejs = require("ejs");
 const mongoose = require("mongoose");
+const leave = require(__dirname + "/models/leave.js");
 
 const app = express();
 
@@ -387,7 +388,7 @@ app.get("/duration", (req,res) => {
     res.render("duration", {pageTitle: "Test duration", duration: null});
 })
 
-/*app.post("/duration", (req,res) => {
+app.post("/duration", (req,res) => {
     // Create begining and end dates
     const start = new Date(req.body.startDate);
     const end = new Date(req.body.endDate);
@@ -395,12 +396,9 @@ app.get("/duration", (req,res) => {
     let iteratorDate = start;
     const leaveDates = [];
 
-    // Calculate duration betwen the begining and the end 
-    let days = date.calculDays(start, end);
-
     //Save leave dates into an array
     while (iteratorDate <= end) {
-        leaveDates.push(iteratorDate.toDateString());
+        leaveDates.push(iteratorDate.toLocaleDateString());
         iteratorDate.setDate(iteratorDate.getDate()+1);
     }
 
@@ -412,14 +410,27 @@ app.get("/duration", (req,res) => {
             console.log(err);
         } else {
             result.forEach(holiday => {
-                holidays.push(holiday.date);
+                holidayDate = new Date(holiday.date);
+                holidays.push(holidayDate.toLocaleDateString());
             });
         }
 
         // Ignore sundays
-        for (let i=0; i<=leaveDates.length; i++) {
-            let date = new Date();
+        for (let i=0; i<leaveDates.length; i++) {
+            let date = new Date(leaveDates[i]);
+            if (date.getDay() === 0) {
+                console.log("Date removed => " + date.toDateString());
+                leaveDates.splice(i, 1);
+            }
         }
+
+        //Ignore holidays
+        holidays.forEach(holiday => {
+            if (leaveDates.includes(holiday)) {
+                let index = leaveDates.indexOf(holiday);
+                leaveDates.splice(index, 1);
+            }
+        });
 
         console.log("|====== Holidays ======|");
         console.table(holidays);
@@ -429,10 +440,10 @@ app.get("/duration", (req,res) => {
         let days = leaveDates.length;
         res.render("duration", {pageTitle: "Test duration", duration: days});
     })
-})*/
+})
 
 
-app.post("/duration", (req,res) => {
+/*app.post("/duration", (req,res) => {
 
     fs.readFile('./views/titre-conge-admin.ejs', 'utf8', function (err, content) {
         if (err) {
@@ -445,7 +456,7 @@ app.post("/duration", (req,res) => {
             stream.pipe(fs.createWriteStream('./certificate.pdf'));
         });
     });
-})
+})*/
 
 //Error Page
 app.get("/erreur", (req,res) => {
