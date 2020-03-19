@@ -10,12 +10,21 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
+/***** Database Manipulation *****/
+
+mongoose.connect('mongodb://localhost:27017/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+
+const holidaySchema = new mongoose.Schema({
+    title: {type: String, required: true},
+    date: {type: String, required: true},
+    duration: {type: Number, required: true}
+})
+
+const Holiday = new mongoose.model("Holiday", holidaySchema);
+
 /********************************************************************/
 
-module.exports.checkLeavePeriod = (startDate, endDate) => {
-    // Create begining and end dates
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+module.exports.checkLeavePeriod = (start, end) => {
 
     let iteratorDate = start;
     const leaveDates = [];

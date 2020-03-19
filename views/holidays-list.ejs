@@ -1,0 +1,27 @@
+<%- include("partials/header") %> 
+    <div class="container mt-5 p-5 content">
+        <h1>Liste des jours féries:</h1>
+        <table class="table table-bordered table-hover shadow mt-4">
+            <thead>
+                <tr>
+                    <th>Titre</th>
+                    <th>Date</th>
+                    <th>Durée</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% holidays.forEach(holiday => { %>
+                    <tr>
+                        <td><%= holiday.title %> </td>
+                        <td><%= holiday.date %></td>
+                        <td><%= holiday.duration %></td>
+                        <td>
+                            <a class="text-danger" href="/liste-jours-feries/<%= holiday._id %>">Supprimer</a>
+                        </td>
+                    </tr>                 
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+<%- include("partials/footer") %> 

@@ -2,12 +2,13 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const _ = require("lodash");
-const date = require(__dirname + "/date.js");
+// const date = require(__dirname + "/date.js");
 const pdf = require('html-pdf');
 const fs = require('fs');
 const ejs = require("ejs");
 const mongoose = require("mongoose");
-const leave = require(__dirname + "/models/leave.js");
+// const leave = require(__dirname + "/models/leave.js");
+const employee = require(__dirname + "/models/employee.js");
 
 const app = express();
 
@@ -31,7 +32,7 @@ const employeeSchema = new mongoose.Schema({
     droitN: {type: String, required: true}
 })
 
-const Employee = new mongoose.model("Personnel", employeeSchema);
+// const Employee = new mongoose.model("Personnel", employeeSchema);
 
 const leaveSchema = new mongoose.Schema({
     empId: {type: String, required: true},
@@ -51,7 +52,6 @@ const holidaySchema = new mongoose.Schema({
 })
 
 const Holiday = new mongoose.model("Holiday", holidaySchema);
-
 /*********************************/
 
 // Authentication Page
@@ -73,6 +73,7 @@ app.get("/", (req, res) => {
     res.redirect("/authent");
 });
 
+/********************************** Leave Section **********************************/
 //Leave form
 app.get("/nouveau-conge-admin", (req, res) => {
     res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: null});
@@ -219,23 +220,21 @@ app.get("/titre-conge-excep", (req,res) => {
     res.render("titre-conge-excep");
 })
 
+/********************************** Employee Section **********************************/
 //Employee List
 app.get("/list-personnel", (req, res) => {
-    Employee.find((err,employeeList) => {
-        if (!err) {
-            res.render("employee-list", {pageTitle: "Liste des Personnels", employees: employeeList});
-        }
+    const employeeList =  employee.getEmployees();
+    employeeList.then((list) => {
+        res.render("employee-list", {pageTitle: "Liste des Personnels", employees: list});
     })
 })
 
 app.post("/list-personnel", (req,res) => {
     const searchedMatricule = req.body.searchedMatricule;
     
-    Employee.find({matricule: searchedMatricule.toUpperCase()}, (err,result) => {
-        if (err) {
-            res.render("employee-list", {pageTitle: "Liste des Personnels", employees: result});
-        }
-        res.render("employee-list", {pageTitle: "Liste des Personnels", employees: result});
+    const searchResult = employee.getEmployeeByMatricule(searchedMatricule);
+    searchResult.then((foundEmployee) => {
+        res.render("employee-list", {pageTitle: "Liste des Personnels", employees: foundEmployee});
     })
 })
 
@@ -243,74 +242,30 @@ app.post("/list-personnel", (req,res) => {
 app.get("/personnel/:empId", (req,res) => {
     const empId = req.params.empId;
 
-    Employee.findById(empId, (err, foundEmployee) => {
-        if(!err) {
-            if (foundEmployee) {
-                res.render("employee-profile", {pageTitle: "Personnel", employee: foundEmployee, alert: null});
-            }
-        }
+    const result = employee.getEmployeeById(empId);
+    result.then((desiredEmployee) => {
+        res.render("employee-profile", {pageTitle: "Personnel", employee: desiredEmployee, alert: null});
     })
-    
 })
 
 app.post("/personnel/:empId", (req,res) => {
     const empId = req.params.empId;
-
-    Employee.findByIdAndRemove(empId, (err) => {
-        if (err) {
-            const alert = {
-                type: "danger",
-                message: err
-            };
-            res.render("employee-profile", {pageTitle: "Personnel", employee: foundEmployee, alert: alert});
-        } else {
-            res.redirect("/list-personnel");
-        }
-    })
-    
+    employee.deleteEmployee(empId, res);
 })
 
 //Employee edit
 app.get("/modifier-personnel/:empId", (req,res) => {
     const employeeId = req.params.empId;
     
-    Employee.findById(employeeId, (err, foundEmployee) => {
-        if (err) {
-            const errAlert = {
-                type: "danger",
-                message: err
-            }
-            res.render("modify-employee", {pageTitle: "Modification", employee: foundEmployee, alert: errAlert});
-        } else {
-            res.render("modify-employee", {pageTitle: "Modification", employee: foundEmployee, alert: null});
-        }
+    const result = employee.getEmployeeById(employeeId);
+    result.then((foundEmployee) => {
+        res.render("modify-employee", {pageTitle: "Modification", employee: foundEmployee, alert: null});
     })
 })
 
 app.post("/modifier-personnel/:empId", (req,res) => {
     const employeeId = req.params.empId;
-    
-    Employee.findByIdAndUpdate(employeeId, {
-        matricule: req.body.matricul,
-        nom: req.body.lastName,
-        prenom: req.body.firstName,
-        dateDeNaissance: req.body.birthDate,
-        fonction: req.body.function,
-        entite: req.body.entity,
-        departsAutorisees: req.body.authorizedDeaprture,
-        droitN_1: req.body.rightsN_1,
-        droitN: req.body.rightsN
-    }, (err) => {
-        if (err) {
-            const errAlert = {
-                type: "danger",
-                message: err
-            }
-            res.render("modify-employee", {pageTitle: "Modification", employee: foundEmployee, alert: errAlert});
-        } else {
-            res.redirect("/personnel/"+employeeId);
-        }
-    })
+    employee.updateEmployee(employeeId, req, res);
 })
 
 //New Employee
@@ -320,66 +275,59 @@ app.get("/nouveau-personnel", (req,res) => {
 
 app.post("/nouveau-personnel", (req,res) => {
     const empMatricule = req.body.matricul.toUpperCase();
-
-    Employee.findOne({matricule: empMatricule}, (err,foundEmployee) =>{
-        if (err) {
-            const alert = {
-                type: "danger",
-                message: err
-            }
-            res.render("new-employee", {pageTitle: "Nouveau Personnel", alert: alert});
-        } else {
-            if (foundEmployee) {
-                const alert = {
-                    type: "danger",
-                    message: "Un personnel existant est trouvé avec le même matricule"
-                }
-
-                res.render("new-employee", {pageTitle: "Nouveau Personnel", alert: alert});
-            } else {
-                const newEmployee = new Employee({
-                    matricule: req.body.matricul.toUpperCase(),
-                    nom: _.upperCase(req.body.lastName),
-                    prenom: _.upperCase(req.body.firstName),
-                    dateDeNaissance: req.body.birthDate,
-                    fonction: _.capitalize(req.body.function),
-                    entite: _.capitalize(req.body.entity)
-                })
-
-                newEmployee.save();
-
-                const alert = {
-                    type: "success",
-                    message: "Le nouveau personnel est ajouté avec succès"
-                }
-                res.render("new-employee", {pageTitle: "Nouveau Personnel", alert: alert});
-            }
-        }
-    })
-    
+    employee.newEmployee(empMatricule, req, res);
 })
 
 // Reliquats
 
 app.get("/reliquats", (req,res) => {
+    employee.getReliquats(res);
+})
 
-    const reliquats = [];
+//Jours feries
+app.get("/nouveau-jours-ferie", (req,res) => {
+    res.render("new-holiday", {pageTitle: "Nouveau Jours Férié", alert: null});
+})
 
-    Employee.find((err,result) => {
-        if (!err) {
-            result.forEach(emp => {
-                const reliquat = {
-                    rid: emp._id,
-                    matricule: emp.matricule,
-                    departs: emp.departsAutorisees,
-                    droitN_1: emp.droitN_1,
-                    droitN: emp.droitN
-                }
+app.post("/nouveau-jours-ferie", (req,res) => {
+    const newHoliday = new Holiday({
+        title: req.body.holidayTitle,
+        date: req.body.startDate,
+        duration: req.body.duration
+    })
 
-                reliquats.push(reliquat);
-            })
+    newHoliday.save((err) => {
+        if (err) {
+            const errAlert = {
+                type: "danger",
+                message: err
+            }
+            res.render("new-holiday", {pageTitle: "Nouveau Jours Férié", alert: errAlert});
+        } else {
+            const success = {
+                type: "success",
+                message: "Le jours férié est ajouté avec succès"
+            }
+            res.render("new-holiday", {pageTitle: "Nouveau Jours Férié", alert: success});
         }
-        res.render("reliquats", {pageTitle: "Reliquats", reliquats: reliquats});
+    })
+})
+
+app.get("/liste-jours-feries", (req,res) => {
+    Holiday.find((err, allHolidays) => {
+        if (!err) {
+            res.render("holidays-list", {pageTitle: "Jours Fériés", holidays: allHolidays});
+        }
+    })
+})
+
+app.get("/liste-jours-feries/:holidayId", (req,res) => {
+    const holidayId = req.params.holidayId;
+    
+    Holiday.findByIdAndRemove({_id: holidayId}, (err) => {
+        if (!err) {
+            res.redirect("/liste-jours-feries");
+        }
     })
 })
 
@@ -393,53 +341,7 @@ app.post("/duration", (req,res) => {
     const start = new Date(req.body.startDate);
     const end = new Date(req.body.endDate);
 
-    let iteratorDate = start;
-    const leaveDates = [];
-
-    //Save leave dates into an array
-    while (iteratorDate <= end) {
-        leaveDates.push(iteratorDate.toLocaleDateString());
-        iteratorDate.setDate(iteratorDate.getDate()+1);
-    }
-
-    // Retrieve holidays from database
-    const holidays = [];
-
-    Holiday.find((err, result) => {
-        if (err) {
-            console.log(err);
-        } else {
-            result.forEach(holiday => {
-                holidayDate = new Date(holiday.date);
-                holidays.push(holidayDate.toLocaleDateString());
-            });
-        }
-
-        // Ignore sundays
-        for (let i=0; i<leaveDates.length; i++) {
-            let date = new Date(leaveDates[i]);
-            if (date.getDay() === 0) {
-                console.log("Date removed => " + date.toDateString());
-                leaveDates.splice(i, 1);
-            }
-        }
-
-        //Ignore holidays
-        holidays.forEach(holiday => {
-            if (leaveDates.includes(holiday)) {
-                let index = leaveDates.indexOf(holiday);
-                leaveDates.splice(index, 1);
-            }
-        });
-
-        console.log("|====== Holidays ======|");
-        console.table(holidays);
-        console.log("|==== Leave Period ====|");
-        console.table(leaveDates);
-
-        let days = leaveDates.length;
-        res.render("duration", {pageTitle: "Test duration", duration: days});
-    })
+    leave.checkLeavePeriod(start, end);
 })
 
 
@@ -458,10 +360,10 @@ app.post("/duration", (req,res) => {
     });
 })*/
 
-//Error Page
-app.get("/erreur", (req,res) => {
-    res.render("error-page", ({pageTitle: "Erreur d'ajout"}));
-})
+
+
+
+
 
 app.listen(3000, () => {
     console.log("Server started on port 3000");
