@@ -28,7 +28,7 @@ module.exports.getEmployees = async () => {
 
 // Get employee by matricule
 module.exports.getEmployeeByMatricule = async (matricule) => {
-    const employee = await Employee.find({matricule: matricule});
+    const employee = await Employee.findOne({matricule: matricule});
     return employee;
 }
 
