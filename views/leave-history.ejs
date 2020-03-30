@@ -36,6 +36,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <% leaveList.reverse() %> 
                     <% leaveList.forEach(leave => { %>
                         <tr>
                             <td><a href="/personnel/<%= leave.empId %> "><%= leave.matricule %></a></td>

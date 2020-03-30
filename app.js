@@ -70,15 +70,6 @@ app.post("/historique", (req,res) => {
     leave.getEmployeeLeaves(searchedMatricule, res);
 })
 
-//Titre conge
-app.get("/titre-conge-admin", (req,res) => {
-    res.render("titre-conge-admin");
-})
-
-app.get("/titre-conge-excep", (req,res) => {
-    res.render("titre-conge-excep");
-})
-
 /********************************** Employee Section **********************************/
 //Employee List
 app.get("/list-personnel", (req, res) => {
@@ -103,7 +94,10 @@ app.get("/personnel/:empId", (req,res) => {
 
     const result = employee.getEmployeeById(empId);
     result.then((desiredEmployee) => {
-        res.render("employee-profile", {pageTitle: "Personnel", employee: desiredEmployee, alert: null});
+        const leaveList = leave.getLeavesById(empId);
+        leaveList.then((foundLeaves) => {
+            res.render("employee-profile", {pageTitle: "Personnel", employee: desiredEmployee, employeeLeaves: foundLeaves, alert: null});
+        })
     })
 })
 
@@ -161,6 +155,27 @@ app.get("/liste-jours-feries/:holidayId", (req,res) => {
     leave.deleteHoliday(holidayId, res);
 })
 
+/********************************** Titre conge **********************************/
+app.get("/titre-conge-admin", (req,res) => {
+    res.render("titre-conge-admin");
+
+    fs.readFile('./views/titre-conge-admin.ejs', 'utf8', function (err, content) {
+        if (err) {
+          return res.status(400).send({error: err});
+        }
+        
+        content = ejs.render("titre-conge-admin");
+
+        pdf.create(content, {format: 'A4', orientation: 'portrait'}).toStream(function(err, stream){
+            stream.pipe(fs.createWriteStream('./certificate.pdf'));
+        });
+    });
+})
+
+app.get("/titre-conge-excep", (req,res) => {
+    res.render("titre-conge-excep");
+})
+
 // Test
 app.get("/duration", (req,res) => {
     res.render("duration", {pageTitle: "Test duration", duration: null});
@@ -170,30 +185,10 @@ app.post("/duration", (req,res) => {
     // Create begining and end dates
     const start = new Date(req.body.startDate);
     const end = new Date(req.body.endDate);
-
-    leave.checkLeavePeriod(start, end, res);
+    
 })
 
-
-/*app.post("/duration", (req,res) => {
-
-    fs.readFile('./views/titre-conge-admin.ejs', 'utf8', function (err, content) {
-        if (err) {
-          return res.status(400).send({error: err});
-        }
-        
-        content = ejs.render("./views/titre-conge-admin.ejs");
-
-        pdf.create(content, {format: 'A4', orientation: 'portrait'}).toStream(function(err, stream){
-            stream.pipe(fs.createWriteStream('./certificate.pdf'));
-        });
-    });
-})*/
-
-
-
-
-
+/********************************** Server listener **********************************/
 
 app.listen(3000, () => {
     console.log("Server started on port 3000");

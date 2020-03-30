@@ -29,14 +29,51 @@
                 </tbody>
             </table>
         </div>
-        <hr>
         <div class="container">
             <form action="/personnel/<%= employee._id %> " method="POST">
                 <a href="/modifier-personnel/<%= employee._id %>" class="btn btn-dark m-2">Modifier</a>
                 <button class="btn btn-outline-danger m-2">Supprimer</button>
             </form>
         </div>
+        <hr>
+        <div class="container">
 
+            <% if (employeeLeaves.length === 0) { %>
+                <div class="alert alert-warning" role="alert">
+                    Aucun congé trouvé pour ce personnel.
+                </div>
+            <% } else { %>
+                <table class="table table-bordered table-hover shadow-sm mt-4">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Matricule</th>
+                            <th>Du</th>
+                            <th>Au</th>
+                            <th>Nature</th>
+                            <th>Nombre de jours</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% employeeLeaves.reverse() %> 
+                        <% employeeLeaves.forEach(leave => { %>
+                            <tr>
+                                <td><a href="/personnel/<%= leave.empId %> "><%= leave.matricule %></a></td>
+                                <td><%= leave.startDate %> </td>
+                                <td><%= leave.endDate %> </td>
+                                <td><%= leave.type %> </td>
+                                <td><%= leave.numberOfDays %> jours </td>
+                                <td>
+                                    <form action="/nouveau-conge-excep" method="POST">
+                                        <button class="btn btn-link" type="submit">Imprimer</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <% }) %> 
+                    </tbody>
+                </table>
+            <% } %>
+        </div>
     </div>
 
 <%- include("partials/footer") %> 

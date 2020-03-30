@@ -78,6 +78,14 @@ module.exports.updateEmployee = (employeeId, req, res) => {
     })
 }
 
+module.exports.update = (employeeId , fields) => {
+    Employee.findOne({_id: employeeId}, (err, foundEmployee) => {
+        if (!err) {
+            console.log(foundEmployee);
+        }
+    })
+}
+
 // Add employee
 module.exports.newEmployee = (empMatricule, req,res) => {
     Employee.findOne({matricule: empMatricule}, (err,foundEmployee) =>{

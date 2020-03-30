@@ -39,7 +39,6 @@
                     <th>Date de Naissance</th>
                     <th>Fonction</th>
                     <th>Entité</th>
-                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -52,11 +51,6 @@
                     <td><%= employee.dateDeNaissance %> </td>
                     <td><%= employee.fonction %> </td>
                     <td><%= employee.entite %> </td>
-                    <td>
-                      <form action="">
-                          <button type="submit" class="btn btn-link m-0" value="<%= employee._id %>">Congés</button>
-                      </form>
-                    </td>
                   </tr>
                 <% }) %>
             </tbody>

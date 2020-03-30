@@ -36,13 +36,13 @@ const Leave = new mongoose.model("Leave", leaveSchema);
 
 /********************************************************************/
 
-checkLeavePeriod = async (start, end, res) => {
+checkLeavePeriod = (start, end, req, res, employee) => {
 
-    let iteratorDate = start;
+    let iteratorDate = new Date(start);
     const leaveDates = [];
 
     //Save leave dates into an array
-    while (iteratorDate <= end) {
+    while (iteratorDate <= new Date(end)) {
         leaveDates.push(iteratorDate.toLocaleDateString());
         iteratorDate.setDate(iteratorDate.getDate()+1);
     }
@@ -50,7 +50,7 @@ checkLeavePeriod = async (start, end, res) => {
     // Retrieve holidays from database
     const holidays = [];
 
-    await Holiday.find((err, result) => {
+    Holiday.find((err, result) => {
         if (err) {
             console.log(err);
         } else {
@@ -68,7 +68,7 @@ checkLeavePeriod = async (start, end, res) => {
         for (let i=0; i<leaveDates.length; i++) {
             let date = new Date(leaveDates[i]);
             if (date.getDay() === 0) {
-                console.log("Date removed => " + date.toDateString());
+                // console.log("Date removed => " + date.toDateString());
                 leaveDates.splice(i, 1);
             }
         }
@@ -77,14 +77,78 @@ checkLeavePeriod = async (start, end, res) => {
         holidays.forEach(holiday => {
             if (leaveDates.includes(holiday)) {
                 let index = leaveDates.indexOf(holiday);
-                let duration = Holiday.findOn
                 leaveDates.splice(index, 1);
             }
         });
 
         let days = leaveDates.length;
-        return days;
-        // res.render("duration", {pageTitle: "Test duration", duration: days});
+        
+        //check employee rights
+        const rights = employee.droitN_1 + employee.droitN;
+
+        if (days>rights) {
+            //Not enough rights
+            const alert = {
+                type: "danger",
+                message: "Le nombre de jours du congeé est supérieure que les droits du personnels."
+            }
+            res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: alert});
+        } else {
+            //Enough rights
+
+            // Update employee rights
+            let newDroitN_1 = parseInt(employee.droitN_1) - days;
+            let newDroitN = parseInt(employee.droitN);
+            let departure = parseInt(employee.departsAutorisees);
+
+            if (newDroitN_1 < 0) {
+                const remaining = newDroitN_1;
+                newDroitN_1 = 0;
+                newDroitN = newDroitN + remaining;
+            }
+            departure --;
+            
+            const fieldsToUpdate = {
+                departsAutorisees: departure,
+                droitN_1: newDroitN_1,
+                droitN: newDroitN
+            }
+            
+            //Update employee leave fields
+            employee.departsAutorisees = departure;
+            employee.droitN_1 = newDroitN_1;
+            employee.droitN = newDroitN;
+
+            employee.save();
+
+            //Create new leave to database
+            let newLeave = Leave({
+                empId: employee._id,
+                matricule: req.body.employeeId.toUpperCase(),
+                startDate: req.body.startDate,
+                endDate: req.body.endDate,
+                type: "Administratif",
+                numberOfDays: days
+            });
+            
+            newLeave.save((err) => {
+                if (!err) {
+                    const successAlert = {
+                        type: "success",
+                        message: "Congé ajouter avec succès."
+                    }
+                    res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: successAlert});
+                } else {
+                    const noResult = {
+                        type: "danger",
+                        message: err
+                    }
+                    res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: noResult});
+                }
+            });
+
+        }
+
     })
 }
 
@@ -93,6 +157,7 @@ checkLeavePeriod = async (start, end, res) => {
 // Create new leave
 
 module.exports.newLeaveAdmin = (req,res) => {
+    //Check duration validity
     if (req.body.startDate > req.body.endDate) {
         const alert = {
             type: "danger",
@@ -105,40 +170,26 @@ module.exports.newLeaveAdmin = (req,res) => {
         const searchResult = employee.getEmployeeByMatricule(empMatricule);
         searchResult.then((foundEmployee) => {
 
-            if (foundEmployee.length === 0) {
+            //No employee found
+            if (!foundEmployee) {
                 const noResult = {
                     type: "danger",
                     message: "Le matricule ne correspond à aucun personnel."
                 }
                 res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: noResult});
             } else {
-                console.log(foundEmployee);
                 
-                const newLeave = Leave({
-                    empId: foundEmployee._id,
-                    matricule: req.body.employeeId.toUpperCase(),
-                    startDate: req.body.startDate,
-                    endDate: req.body.endDate,
-                    type: "Administratif",
-                    // numberOfDays: date.calculDays(req.body.startDate, req.body.endDate)
-                    numberOfDays: 0
-                });
-                
-                newLeave.save((err) => {
-                    if (!err) {
-                        const successAlert = {
-                            type: "success",
-                            message: "Congé ajouter avec succès."
-                        }
-                        res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: successAlert});
-                    } else {
-                        const noResult = {
-                            type: "danger",
-                            message: err
-                        }
-                        res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: noResult});
+                if (foundEmployee.departsAutorisees <= 0) {
+                    //Employee doesn't have the rights to leave
+                    const alert = {
+                        type: "danger",
+                        message: "Le personnel n'a aucun départ autorisé."
                     }
-                });
+                    res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: alert});
+                } else {
+                    //Employee has the rights to leave
+                    checkLeavePeriod(req.body.startDate, req.body.endDate, req, res, foundEmployee)
+                }
             }
 
         })
@@ -230,6 +281,11 @@ module.exports.getEmployeeLeaves = (matricule, res) => {
             }
         }
     })
+}
+
+module.exports.getLeavesById = async (employeeId) => {
+    const leaveList = await Leave.find({empId: employeeId});
+    return leaveList;
 }
 
 // Create Holiday
