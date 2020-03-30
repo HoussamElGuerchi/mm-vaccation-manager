@@ -104,6 +104,13 @@ module.exports.newEmployee = (empMatricule, req,res) => {
 
                 res.render("new-employee", {pageTitle: "Nouveau Personnel", alert: alert});
             } else {
+                
+                const startOfWork = new Date(req.body.startOfWorkDate);
+                const endOfYear = new Date(new Date().getFullYear(), 11, 31);
+                
+                const workingDays = Math.round((endOfYear.getTime() - startOfWork.getTime())/(1000*60*60*24));
+                const currentYearRights = Math.round((workingDays*26)/365);
+
                 const newEmployee = new Employee({
                     matricule: req.body.matricul.toUpperCase(),
                     nom: _.upperCase(req.body.lastName),
@@ -113,7 +120,7 @@ module.exports.newEmployee = (empMatricule, req,res) => {
                     entite: _.capitalize(req.body.entity),
                     departsAutorisees: 5,
                     droitN_1: 0,
-                    droitN: 0
+                    droitN: currentYearRights
                 })
 
                 newEmployee.save();
