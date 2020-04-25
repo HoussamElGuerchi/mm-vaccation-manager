@@ -4,45 +4,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Titre congé administratif</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        h1 {
+            font-size: 18pt;
+            margin-top: 10%;
+        }
+        h3 {
+            font-size: 14pt;
+        }
+        td, th, p {
+            font-size: 10pt;
+        }
+        td, th {
+            text-align: left;
+            padding-top: 2%;
+            padding-bottom: 2%;
+        }
+        .leave-desc {
+            margin-top: 70px;
+        }
+        .center {
+            text-align: center;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .m-3 {
+            margin: 12% 3%;
+        }
+        .chef {
+            margin-top: 70px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container p-5">
+    <div class="">
         <% let date = new Date() %>
-        <div class="p-2 border center mb-5">
-            <h3>TITRE DE CONGE EXCEPRTIONNEL</h3>
-            <h3>N°................/D/DRH/<%= date.getFullYear() %> </h3>
+        <div class="center">
+            <h1>TITRE DE CONGE EXCEPRTIONNEL<br>
+            N°............................/D/DRH/<%= date.getFullYear() %> </h1>
+            <h3>(<%= leave.type %>)</h3>
         </div>
 
-        <div class="container mt-3 p-5 mb-5" style="text-align: left">
-            <div class="row">
-                <div class="col-lg-6"><p><b>Mr/Mme : </b></p></div>
-                <div class="col-lg-6"><b>Matricule : </b></div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6"><p><b>Fonction : </b></p></div>
-                <div class="col-lg-6"><p><b>Affectation : </b></p></div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <p><b>Est autorisé(e) de prendre un congé exceptionnel de : </b></p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6"><p><b>Du : </b></p></div>
-                <div class="col-lg-6"><p><b>Au : </b></p></div>
-            </div>
+        <div class="leave-desc m-3">
+            <table>
+                <tr>
+                    <td>Mr/Mme :</td>
+                    <td><%= employee.nom %> <%= employee.prenom %></td>
+                </tr>
+                <tr>
+                    <td>Matricule :</td>
+                    <td><%= employee.matricule %></td>
+                </tr>
+                <tr>
+                    <td>Fonction :</td>
+                    <td><%= employee.fonction %></td>
+                </tr>
+                <tr>
+                    <td>Affectation :</td>
+                    <td><%= employee.entite %></td>
+                </tr>
+                <tr>
+                    <td colspan="2">Est autorisé(e) de prendre un congé exceptionnel de : <%= leave.numberOfDays %></td>
+                </tr>
+                <tr>
+                    <td>Du :</td>
+                    <td><%= leave.startDate %></td>
+                </tr>
+                <tr>
+                    <td>Au :</td>
+                    <td><%= leave.endDate %></td>
+                </tr>
+            </table>
         </div>
 
-        <div class="container mt-3 mb-5">
-            <div class="container">
-                <p class="mb-5"><b>LE CHEF DE LA DIVISION DES</b><br><b>RESSOURCES HUMAINES</b></p>
-                <p><b>Z. INAJJARNE</b></p>
-            </div>
+        <div class="right m-3">
+            <p><b>LE CHEF DE LA DIVISION DES</b><br><b>RESSOURCES HUMAINES</b></p>
+            <p class="chef"><b>Z. INAJJARNE</b></p>
         </div>
 
-        <div class="container mt-5" style="text-align: right">
+        <div class="right m-3">
             <p>EN.DCE.PA.GRHS.1.0</p>
         </div>
     </div>

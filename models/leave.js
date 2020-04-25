@@ -4,6 +4,8 @@ const _ = require("lodash");
 const ejs = require("ejs");
 const employee = require(__dirname + "/employee.js");
 const mongoose = require("mongoose");
+const pdf = require('html-pdf');
+const fs = require('fs');
 
 const app = express();
 
@@ -133,16 +135,33 @@ checkLeavePeriod = (start, end, req, res, employee) => {
             
             newLeave.save((err) => {
                 if (!err) {
-                    const successAlert = {
-                        type: "success",
-                        message: "Congé ajouter avec succès."
-                    }
-                    res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: successAlert});
+                    // const successAlert = {
+                    //     type: "success",
+                    //     message: "Congé ajouter avec succès."
+                    // }
+                    // res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: successAlert});
+
+                    res.render("titre-conge-admin", {employee: employee, leave: newLeave}, (err, html) => {
+                        const currentDate = new Date();
+                        const fileTitle = "conge_admin_"+employee.matricule+"_"+currentDate.toISOString();
+                        pdf.create(html, {format: 'A4', orientation: 'portrait'}).toFile('./titres_conges/'+fileTitle+'.pdf', function(err, result) {
+                            if (err){
+                                return console.log(err);
+                            }
+                             else{
+                                var datafile = fs.readFileSync('./titres_conges/'+fileTitle+'.pdf');
+                                res.header('content-type','application/pdf');
+                                res.send(datafile);
+                            }
+                        });
+                    })
+
                 } else {
                     const noResult = {
                         type: "danger",
                         message: err
                     }
+                    
                     res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: noResult});
                 }
             });
@@ -151,6 +170,17 @@ checkLeavePeriod = (start, end, req, res, employee) => {
 
     })
 }
+
+const countLeaveDays = (beginning, end) => {
+    // The number of milliseconds in one day
+    const ONE_DAY = 1000 * 60 * 60 * 24;
+
+    // Calculate the difference in milliseconds
+    const differenceInMs = Math.abs(beginning - end);
+
+    // Convert back to days and return
+    return Math.round(differenceInMs / ONE_DAY);
+} 
 
 /********************************************************************/
 
@@ -217,24 +247,31 @@ module.exports.newLeaveExcep = (req, res) => {
                 }
                 res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: noResult});
             } else {
-                console.log(foundEmployee);
-                
                 const newLeave = Leave({
                     empId: foundEmployee._id,
                     matricule: empMatricule,
                     startDate: req.body.startDate,
                     endDate: req.body.endDate,
                     type: req.body.leaveType,
-                    numberOfDays: 0
+                    numberOfDays: countLeaveDays(new Date(req.body.startDate), new Date(req.body.endDate))+1
                 });
                 
                 newLeave.save((err) => {
                     if (!err) {
-                        const successAlert = {
-                            type: "success",
-                            message: "Congé ajouter avec succès."
-                        }
-                        res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: successAlert});
+                        res.render("titre-conge-excep", {employee: foundEmployee, leave: newLeave}, (err, html) => {
+                            const currentDate = new Date();
+                            const fileTitle = "conge_admin_"+foundEmployee.matricule+"_"+currentDate.toISOString();
+                            pdf.create(html, {format: 'A4', orientation: 'portrait'}).toFile('./titres_conges/'+fileTitle+'.pdf', function(err, result) {
+                                if (err){
+                                    return console.log(err);
+                                }
+                                else{
+                                    var datafile = fs.readFileSync('./titres_conges/'+fileTitle+'.pdf');
+                                    res.header('content-type','application/pdf');
+                                    res.send(datafile);
+                                }
+                            });
+                        });
                     } else {
                         const noResult = {
                             type: "danger",

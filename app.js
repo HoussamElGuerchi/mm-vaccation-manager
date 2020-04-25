@@ -4,6 +4,8 @@ const bodyParser = require("body-parser");
 const _ = require("lodash");
 // const date = require(__dirname + "/date.js");
 const pdf = require('html-pdf');
+const puppeteer = require('puppeteer');
+const path = require("path");
 const fs = require('fs');
 const ejs = require("ejs");
 const mongoose = require("mongoose");
@@ -153,39 +155,6 @@ app.get("/liste-jours-feries", (req,res) => {
 app.get("/liste-jours-feries/:holidayId", (req,res) => {
     const holidayId = req.params.holidayId;
     leave.deleteHoliday(holidayId, res);
-})
-
-/********************************** Titre conge **********************************/
-app.get("/titre-conge-admin", (req,res) => {
-    res.render("titre-conge-admin");
-
-    fs.readFile('./views/titre-conge-admin.ejs', 'utf8', function (err, content) {
-        if (err) {
-          return res.status(400).send({error: err});
-        }
-        
-        content = ejs.render("titre-conge-admin");
-
-        pdf.create(content, {format: 'A4', orientation: 'portrait'}).toStream(function(err, stream){
-            stream.pipe(fs.createWriteStream('./certificate.pdf'));
-        });
-    });
-})
-
-app.get("/titre-conge-excep", (req,res) => {
-    res.render("titre-conge-excep");
-})
-
-// Test
-app.get("/duration", (req,res) => {
-    res.render("duration", {pageTitle: "Test duration", duration: null});
-})
-
-app.post("/duration", (req,res) => {
-    // Create begining and end dates
-    const start = new Date(req.body.startDate);
-    const end = new Date(req.body.endDate);
-    
 })
 
 /********************************** Server listener **********************************/

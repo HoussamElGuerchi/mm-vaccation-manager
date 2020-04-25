@@ -4,25 +4,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Titre congé administratif</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        h1 {
+            font-size: 18pt;
+            margin-top: 5%;
+        }
+        h3 {
+            font-size: 14pt;
+        }
+        td, th, p {
+            font-size: 10pt;
+        }
+        td, th {
+            text-align: left;
+            padding-top: 2%;
+            padding-bottom: 2%;
+        }
+        .leave-desc {
+            margin-top: 70px;
+        }
+        .center {
+            text-align: center;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .m-3 {
+            margin: 12% 3%;
+        }
+        .chef {
+            margin-top: 70px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container p-5">
+    <div>
         <% let date = new Date() %>
-        <div class="p-2 border center">
-            <h3>Titre de conge administratif</h3>
-            <h3>N°................/D/DRH/<%= date.getFullYear() %> </h3>
+        <div class="center">
+            <h1>Titre de conge administratif <br>
+            N°................../D/DRH/<%= date.getFullYear() %></h1>
         </div>
-        <table class="table table-borderless titre mt-5">
+        <table class="leave-desc m-3">
             <tbody>
                 <tr>
                     <th>Nombre de jours :</th>
-                    <td></td>
+                    <td><%= leave.numberOfDays %></td>
                 </tr>
                 <tr>
                     <th>Période de validité :</th>
-                    <td></td>
+                    <td><%= leave.startDate %> au <%= leave.endDate %></td>
                 </tr>
                 <tr>
                     <th>Droit :</th>
@@ -30,58 +62,50 @@
                 </tr>
                 <tr>
                     <th>Nature :</th>
-                    <td></td>
+                    <td><%= leave.type %> </td>
                 </tr>
                 <tr>
                     <th>Mr/Mme :</th>
-                    <td></td>
+                    <td><%= employee.nom %> <%= employee.prenom %></td>
                 </tr>
                 <tr>
                     <th>Matricule :</th>
-                    <td></td>
+                    <td><%= employee.matricule %></td>
                 </tr>
                 <tr>
                     <th>Fonction :</th>
-                    <td></td>
+                    <td><%= employee.fonction %></td>
                 </tr>
                 <tr>
                     <th>Entité :</th>
-                    <td></td>
+                    <td><%= employee.entite %></td>
                 </tr>
             </tbody>
         </table>
-        <div class="container mt-3" style="width: 70%;">
-            <div class="container chef ml-auto">
-                <p class="mb-5"><b>LE CHEF DE LA DIVISION DES</b><br><b>RESSOURCES HUMAINES</b></p>
-                <p><b>Z. INAJJARNE</b></p>
-            </div>
+        <div class="right m-3">
+                <p><b>LE CHEF DE LA DIVISION DES</b><br><b>RESSOURCES HUMAINES</b></p>
+                <p class="chef"><b>Z. INAJJARNE</b></p>
         </div>
-        <div class="container content mb-5">
+        <div class="m-3">
+            <h3>Reliquats</h3>
             <table>
-                <table class="table table-borderless titre mt-3">
-                    <thead>
-                        <tr>
-                            <td>Reliquats</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th>Départs autorisés <%= date.getFullYear() %> :</th>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <th>Droit restant <%= date.getFullYear()-1 %> :</th>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <th>Droit restant <%= date.getFullYear()%> :</th>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                    </table>
+                <tbody>
+                    <tr>
+                        <th>Départs autorisés <%= date.getFullYear() %> :</th>
+                        <td><%= employee.departsAutorisees %></td>
+                    </tr>
+                    <tr>
+                        <th>Droit restant <%= date.getFullYear()-1 %> :</th>
+                        <td><%= employee.droitN_1 %></td>
+                    </tr>
+                    <tr>
+                        <th>Droit restant <%= date.getFullYear()%> :</th>
+                        <td><%= employee.droitN %></td>
+                    </tr>
+                </tbody>
             </table>
         </div>
-        <div class="container titre mt-5" style="text-align: right">
+        <div class="right" style="margin-right: 3%;">
             <p>EN.DCE.PA.GRHS.1.0</p>
         </div>
     </div>
