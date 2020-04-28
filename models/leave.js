@@ -4,8 +4,6 @@ const _ = require("lodash");
 const ejs = require("ejs");
 const employee = require(__dirname + "/employee.js");
 const mongoose = require("mongoose");
-const pdf = require('html-pdf');
-const fs = require('fs');
 
 const app = express();
 
@@ -32,6 +30,7 @@ const leaveSchema = new mongoose.Schema({
     endDate: {type: String, required: true},
     numberOfDays: {type: Number},
     type: {type: String, required: true},
+    executedRights: String,
 })
 
 const Leave = new mongoose.model("Leave", leaveSchema);
@@ -97,16 +96,21 @@ checkLeavePeriod = (start, end, req, res, employee) => {
             res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: alert});
         } else {
             //Enough rights
+            const date = new Date();
+            let rights = "";
 
             // Update employee rights
+            const tempDroitN_1 = parseInt(employee.droitN_1);
             let newDroitN_1 = parseInt(employee.droitN_1) - days;
             let newDroitN = parseInt(employee.droitN);
             let departure = parseInt(employee.departsAutorisees);
 
             if (newDroitN_1 < 0) {
                 const remaining = newDroitN_1;
+                rights += (days+remaining)+" jours "+(date.getFullYear()-1);
                 newDroitN_1 = 0;
                 newDroitN = newDroitN + remaining;
+                rights += " + "+((-1)*remaining)+" jours "+date.getFullYear();
             }
             departure --;
             
@@ -130,29 +134,13 @@ checkLeavePeriod = (start, end, req, res, employee) => {
                 startDate: req.body.startDate,
                 endDate: req.body.endDate,
                 type: "Administratif",
-                numberOfDays: days
+                numberOfDays: days,
+                executedRights: rights
             });
             
             newLeave.save((err) => {
                 if (!err) {
-
                     res.render("titre-conge-admin", {employee: employee, leave: newLeave});
-
-                    // res.render("titre-conge-admin", {employee: employee, leave: newLeave}, (err, html) => {
-                    //     const currentDate = new Date();
-                    //     const fileTitle = "conge_admin_"+employee.matricule+"_"+currentDate.toISOString();
-                    //     pdf.create(html, {format: 'A4', orientation: 'portrait'}).toFile('./titres_conges/'+fileTitle+'.pdf', function(err, result) {
-                    //         if (err){
-                    //             return console.log(err);
-                    //         }
-                    //          else{
-                    //             var datafile = fs.readFileSync('./titres_conges/'+fileTitle+'.pdf');
-                    //             res.header('content-type','application/pdf');
-                    //             res.send(datafile);
-                    //         }
-                    //     });
-                    // })
-
                 } else {
                     const noResult = {
                         type: "danger",
@@ -256,20 +244,6 @@ module.exports.newLeaveExcep = (req, res) => {
                 newLeave.save((err) => {
                     if (!err) {
                         res.render("titre-conge-excep", {employee: foundEmployee, leave: newLeave});
-                        // res.render("titre-conge-excep", {employee: foundEmployee, leave: newLeave}, (err, html) => {
-                        //     const currentDate = new Date();
-                        //     const fileTitle = "conge_admin_"+foundEmployee.matricule+"_"+currentDate.toISOString();
-                        //     pdf.create(html, {format: 'A4', orientation: 'portrait'}).toFile('./titres_conges/'+fileTitle+'.pdf', function(err, result) {
-                        //         if (err){
-                        //             return console.log(err);
-                        //         }
-                        //         else{
-                        //             var datafile = fs.readFileSync('./titres_conges/'+fileTitle+'.pdf');
-                        //             res.header('content-type','application/pdf');
-                        //             res.send(datafile);
-                        //         }
-                        //     });
-                        // });
                     } else {
                         const noResult = {
                             type: "danger",
