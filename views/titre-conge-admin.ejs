@@ -5,15 +5,19 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Titre congé administratif</title>
     <style>
+        body {
+            width: 793.7px;
+            margin: auto;
+        }
         h1 {
-            font-size: 18pt;
+            font-size: 24pt;
             margin-top: 5%;
         }
         h3 {
-            font-size: 14pt;
+            font-size: 16pt;
         }
         td, th, p {
-            font-size: 10pt;
+            font-size: 12pt;
         }
         td, th {
             text-align: left;
@@ -54,7 +58,13 @@
                 </tr>
                 <tr>
                     <th>Période de validité :</th>
-                    <td><%= leave.startDate %> au <%= leave.endDate %></td>
+                    <td>
+                        <% if (leave.startDate == leave.endDate) { %>
+                            le <%= leave.startDate %> 
+                        <% } else {%>
+                            <%= leave.startDate %> au <%= leave.endDate %>
+                        <% } %>
+                    </td>
                 </tr>
                 <tr>
                     <th>Droit :</th>

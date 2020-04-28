@@ -5,15 +5,19 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Titre congé administratif</title>
     <style>
+        body {
+            width: 793.7px;
+            margin: auto;
+        }
         h1 {
-            font-size: 18pt;
+            font-size: 20pt;
             margin-top: 10%;
         }
         h3 {
-            font-size: 14pt;
+            font-size: 16pt;
         }
         td, th, p {
-            font-size: 10pt;
+            font-size: 12pt;
         }
         td, th {
             text-align: left;
@@ -51,30 +55,30 @@
         <div class="leave-desc m-3">
             <table>
                 <tr>
-                    <td>Mr/Mme :</td>
+                    <td><b>Mr/Mme :</b></td>
                     <td><%= employee.nom %> <%= employee.prenom %></td>
                 </tr>
                 <tr>
-                    <td>Matricule :</td>
+                    <td><b>Matricule :</b></td>
                     <td><%= employee.matricule %></td>
                 </tr>
                 <tr>
-                    <td>Fonction :</td>
+                    <td><b>Fonction :</b></td>
                     <td><%= employee.fonction %></td>
                 </tr>
                 <tr>
-                    <td>Affectation :</td>
+                    <td><b>Affectation :</b></td>
                     <td><%= employee.entite %></td>
                 </tr>
                 <tr>
-                    <td colspan="2">Est autorisé(e) de prendre un congé exceptionnel de : <%= leave.numberOfDays %></td>
+                    <td colspan="2"><b>Est autorisé(e) de prendre un congé exceptionnel de : </b><%= leave.numberOfDays %></td>
                 </tr>
                 <tr>
-                    <td>Du :</td>
+                    <td><b>Du :</b></td>
                     <td><%= leave.startDate %></td>
                 </tr>
                 <tr>
-                    <td>Au :</td>
+                    <td><b>Au :</b></td>
                     <td><%= leave.endDate %></td>
                 </tr>
             </table>

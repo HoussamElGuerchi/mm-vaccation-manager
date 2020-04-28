@@ -123,6 +123,22 @@ app.post("/modifier-personnel/:empId", (req,res) => {
     employee.updateEmployee(employeeId, req, res);
 })
 
+//Employee leave title printing
+app.get("/imprimer-titre/:leaveId", (req, res) => {
+    const leaveId = req.params.leaveId;
+    const leaveToPrint = leave.getLeaveById(leaveId);
+    leaveToPrint.then((foundLeave) => {
+        const employeeLeave = employee.getEmployeeById(foundLeave.empId);
+        employeeLeave.then((foundEmployee) => {
+            if (foundLeave.type == "Administratif") {
+                res.render("titre-conge-admin", {employee: foundEmployee, leave: foundLeave});
+            } else {
+                res.render("titre-conge-excep", {employee: foundEmployee, leave: foundLeave});
+            }
+        })
+    });
+})
+
 //New Employee
 app.get("/nouveau-personnel", (req,res) => {
     res.render("new-employee", {pageTitle: "Nouveau Personnel", alert: null});

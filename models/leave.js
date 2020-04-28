@@ -83,7 +83,7 @@ checkLeavePeriod = (start, end, req, res, employee) => {
             }
         });
 
-        let days = leaveDates.length;
+        let days = (leaveDates.length == 0) ? 0 : leaveDates.length;
         
         //check employee rights
         const rights = employee.droitN_1 + employee.droitN;
@@ -135,26 +135,23 @@ checkLeavePeriod = (start, end, req, res, employee) => {
             
             newLeave.save((err) => {
                 if (!err) {
-                    // const successAlert = {
-                    //     type: "success",
-                    //     message: "Congé ajouter avec succès."
-                    // }
-                    // res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: successAlert});
 
-                    res.render("titre-conge-admin", {employee: employee, leave: newLeave}, (err, html) => {
-                        const currentDate = new Date();
-                        const fileTitle = "conge_admin_"+employee.matricule+"_"+currentDate.toISOString();
-                        pdf.create(html, {format: 'A4', orientation: 'portrait'}).toFile('./titres_conges/'+fileTitle+'.pdf', function(err, result) {
-                            if (err){
-                                return console.log(err);
-                            }
-                             else{
-                                var datafile = fs.readFileSync('./titres_conges/'+fileTitle+'.pdf');
-                                res.header('content-type','application/pdf');
-                                res.send(datafile);
-                            }
-                        });
-                    })
+                    res.render("titre-conge-admin", {employee: employee, leave: newLeave});
+
+                    // res.render("titre-conge-admin", {employee: employee, leave: newLeave}, (err, html) => {
+                    //     const currentDate = new Date();
+                    //     const fileTitle = "conge_admin_"+employee.matricule+"_"+currentDate.toISOString();
+                    //     pdf.create(html, {format: 'A4', orientation: 'portrait'}).toFile('./titres_conges/'+fileTitle+'.pdf', function(err, result) {
+                    //         if (err){
+                    //             return console.log(err);
+                    //         }
+                    //          else{
+                    //             var datafile = fs.readFileSync('./titres_conges/'+fileTitle+'.pdf');
+                    //             res.header('content-type','application/pdf');
+                    //             res.send(datafile);
+                    //         }
+                    //     });
+                    // })
 
                 } else {
                     const noResult = {
@@ -188,10 +185,10 @@ const countLeaveDays = (beginning, end) => {
 
 module.exports.newLeaveAdmin = (req,res) => {
     //Check duration validity
-    if (req.body.startDate > req.body.endDate) {
+    if ((req.body.startDate > req.body.endDate)) {
         const alert = {
             type: "danger",
-            message: "Période du congé invalide, veuillez vérifier la date de début et de la fin du congé."
+            message: "Période du congé invalide, veuillez vérifier la date de début et la date du fin."
         }
         res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: alert});
     } else {
@@ -228,12 +225,12 @@ module.exports.newLeaveAdmin = (req,res) => {
 
 module.exports.newLeaveExcep = (req, res) => {
 
-    if (req.body.startDate > req.body.endDate) {
+    if ((req.body.startDate > req.body.endDate)) {
         const alert = {
             type: "danger",
-            message: "Période du congé invalide, veuillez vérifier la date de début et de la fin du congé."
+            message: "Période du congé invalide, veuillez vérifier la date de début et la date du fin."
         }
-        res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: alert});
+        res.render("leave-form-excep", {pageTitle: "Nouveau Congé", alert: alert});
     } else {
         const empMatricule = req.body.employeeId.toUpperCase();
 
@@ -258,20 +255,21 @@ module.exports.newLeaveExcep = (req, res) => {
                 
                 newLeave.save((err) => {
                     if (!err) {
-                        res.render("titre-conge-excep", {employee: foundEmployee, leave: newLeave}, (err, html) => {
-                            const currentDate = new Date();
-                            const fileTitle = "conge_admin_"+foundEmployee.matricule+"_"+currentDate.toISOString();
-                            pdf.create(html, {format: 'A4', orientation: 'portrait'}).toFile('./titres_conges/'+fileTitle+'.pdf', function(err, result) {
-                                if (err){
-                                    return console.log(err);
-                                }
-                                else{
-                                    var datafile = fs.readFileSync('./titres_conges/'+fileTitle+'.pdf');
-                                    res.header('content-type','application/pdf');
-                                    res.send(datafile);
-                                }
-                            });
-                        });
+                        res.render("titre-conge-excep", {employee: foundEmployee, leave: newLeave});
+                        // res.render("titre-conge-excep", {employee: foundEmployee, leave: newLeave}, (err, html) => {
+                        //     const currentDate = new Date();
+                        //     const fileTitle = "conge_admin_"+foundEmployee.matricule+"_"+currentDate.toISOString();
+                        //     pdf.create(html, {format: 'A4', orientation: 'portrait'}).toFile('./titres_conges/'+fileTitle+'.pdf', function(err, result) {
+                        //         if (err){
+                        //             return console.log(err);
+                        //         }
+                        //         else{
+                        //             var datafile = fs.readFileSync('./titres_conges/'+fileTitle+'.pdf');
+                        //             res.header('content-type','application/pdf');
+                        //             res.send(datafile);
+                        //         }
+                        //     });
+                        // });
                     } else {
                         const noResult = {
                             type: "danger",
@@ -323,6 +321,11 @@ module.exports.getEmployeeLeaves = (matricule, res) => {
 module.exports.getLeavesById = async (employeeId) => {
     const leaveList = await Leave.find({empId: employeeId});
     return leaveList;
+}
+
+module.exports.getLeaveById = async (leaveId) => {
+    const leave = await Leave.findById(leaveId);
+    return leave;
 }
 
 // Create Holiday

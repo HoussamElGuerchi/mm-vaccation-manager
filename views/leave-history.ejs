@@ -45,9 +45,7 @@
                             <td><%= leave.type %> </td>
                             <td><%= leave.numberOfDays %> jours </td>
                             <td>
-                                <form action="/nouveau-conge-excep" method="POST">
-                                    <button class="btn btn-link" type="submit">Imprimer</button>
-                                </form>
+                                <a href="/imprimer-titre/<%= leave._id %>">Imprimer</a>
                             </td>
                         </tr>
                     <% }) %> 
