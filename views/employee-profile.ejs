@@ -51,7 +51,7 @@
                             <th>Au</th>
                             <th>Nature</th>
                             <th>Nombre de jours</th>
-                            <th>Action</th>
+                            <th colspan="2">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -64,7 +64,16 @@
                                 <td><%= leave.type %> </td>
                                 <td><%= leave.numberOfDays %> jours </td>
                                 <td>
-                                    <a href="/imprimer-titre/<%= leave._id %> ">Imprimer</a>
+                                    <a href="/imprimer-titre/<%= leave._id %> " target="blank">Imprimer</a>
+                                </td>
+                                <td>
+                                <% const today = new Date(); %>
+                                <% const start = new Date(leave.startDate); %>
+                                <% if (today < start) { %> 
+                                    <a class="text-danger" href="/annuler-conge/<%= leave._id %>">Annuler</a>
+                                <% } else { %>
+                                    <a href="/reprise-travail/<%= leave._id %>">Reprise de Travail</a>
+                                <% } %>
                                 </td>
                             </tr>
                         <% }) %> 

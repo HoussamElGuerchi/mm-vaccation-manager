@@ -32,14 +32,42 @@
     </nav>
 
     <div class="container shadow-lg p-3 mb-5 bg-white auth-cntnr">
-        <h1 class="mb-3 p-3">Authentification</h1>
-        <form class="auth-form" action="/authent" method="POST">
+        <h1 class="mb-3 p-3">Register</h1>
+        <form class="auth-form" action="/register" method="POST">
 
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
                     <div class="input-group-text"><i class="fas fa-user"></i></div>
                 </div>
-                <input type="text" class="form-control" id="inlineFormInputGroup" name="username" placeholder="Identifiant">
+                <input type="text" class="form-control" id="inlineFormInputGroup" name="username" placeholder="matricule">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <div class="input-group-text"><i class="fas fa-user"></i></div>
+                </div>
+                <input type="text" class="form-control" id="inlineFormInputGroup" name="nom" placeholder="Nom">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <div class="input-group-text"><i class="fas fa-user"></i></div>
+                </div>
+                <input type="text" class="form-control" id="inlineFormInputGroup" name="prenom" placeholder="Prenom">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <div class="input-group-text"><i class="fas fa-user"></i></div>
+                </div>
+                <input type="text" class="form-control" id="inlineFormInputGroup" name="fonction" placeholder="Fonction">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <div class="input-group-text"><i class="fas fa-user"></i></div>
+                </div>
+                <input type="text" class="form-control" id="inlineFormInputGroup" name="entite" placeholder="Entité">
             </div>
 
             <div class="input-group mb-3">
@@ -49,7 +77,7 @@
                 <input type="password" class="form-control" id="inlineFormInputGroup" name="password" placeholder="Mot de Passe">
             </div>
             
-            <button class="btn btn-outline-dark mb-3" type="submit">Connexion <i class="fas fa-sign-in-alt"></i></button>
+            <button class="btn btn-outline-dark mb-3" type="submit">Register <i class="fas fa-sign-in-alt"></i></button>
         </form>
     </div>
 </body>

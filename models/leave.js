@@ -113,6 +113,7 @@ checkLeavePeriod = (start, end, req, res, employee) => {
                 rights += " + "+((-1)*remaining)+" jours "+date.getFullYear();
             }
             departure --;
+            console.log(rights);
             
             const fieldsToUpdate = {
                 departsAutorisees: departure,
@@ -300,6 +301,42 @@ module.exports.getLeavesById = async (employeeId) => {
 module.exports.getLeaveById = async (leaveId) => {
     const leave = await Leave.findById(leaveId);
     return leave;
+}
+
+//Cancel employee's leave
+module.exports.cancelLeave = (leaveId, req, res) => {
+    Leave.findById(leaveId, (err, foundLeave) => {
+        if (!err) {
+            const numberOfDays = foundLeave.numberOfDays;
+            const concernedEmployee = employee.getEmployeeById(foundLeave.empId);
+
+            concernedEmployee.then((foundEmployee) => {
+
+                if (foundLeave.droitN == 26) {
+                    foundLeave.droitN_1 = parseInt(foundLeave.droitN_1) + numberOfDays;
+                } else {
+                    const temp = (parseInt(foundEmployee.droitN) + numberOfDays) - 26;
+                    console.log(temp);
+                    foundEmployee.droitN = (parseInt(foundEmployee.droitN) + numberOfDays) - temp;
+                    foundEmployee.droitN_1 = parseInt(foundEmployee.droitN_1) + temp;
+                    foundEmployee.departsAutorisees = parseInt(foundEmployee.departsAutorisees) + 1;
+                }
+                foundEmployee.save();
+
+            });
+
+            Leave.findByIdAndRemove(leaveId, () => {
+                res.redirect("/historique");
+            });
+        }
+    });
+}
+
+//Delete leave by id
+module.exports.deleteLeave = (leaveId, res) => {
+    Leave.findByIdAndRemove(leaveId, () => {
+        res.redirect("/historique");
+    })
 }
 
 // Create Holiday
