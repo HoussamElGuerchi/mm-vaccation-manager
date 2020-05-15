@@ -37,7 +37,7 @@ const Leave = new mongoose.model("Leave", leaveSchema);
 
 /********************************************************************/
 
-checkLeavePeriod = (start, end, req, res, employee) => {
+checkLeavePeriod = (start, end, req, res, emp) => {
 
     let iteratorDate = new Date(start);
     const leaveDates = [];
@@ -69,7 +69,6 @@ checkLeavePeriod = (start, end, req, res, employee) => {
         for (let i=0; i<leaveDates.length; i++) {
             let date = new Date(leaveDates[i]);
             if (date.getDay() === 0) {
-                // console.log("Date removed => " + date.toDateString());
                 leaveDates.splice(i, 1);
             }
         }
@@ -85,7 +84,7 @@ checkLeavePeriod = (start, end, req, res, employee) => {
         let days = (leaveDates.length == 0) ? 0 : leaveDates.length;
         
         //check employee rights
-        const rights = employee.droitN_1 + employee.droitN;
+        const rights = emp.droitN_1 + emp.droitN;
 
         if (days>rights) {
             //Not enough rights
@@ -100,38 +99,38 @@ checkLeavePeriod = (start, end, req, res, employee) => {
             let rights = "";
 
             // Update employee rights
-            const tempDroitN_1 = parseInt(employee.droitN_1);
-            let newDroitN_1 = parseInt(employee.droitN_1) - days;
-            let newDroitN = parseInt(employee.droitN);
-            let departure = parseInt(employee.departsAutorisees);
+            const tempDroitN_1 = parseInt(emp.droitN_1);
+            let newDroitN_1 = parseInt(emp.droitN_1) - days;
+            let newDroitN = parseInt(emp.droitN);
+            let departure = parseInt(emp.departsAutorisees);
 
             if (newDroitN_1 < 0) {
                 const remaining = newDroitN_1;
-                rights += (days+remaining)+" jours "+(date.getFullYear()-1);
+                rights = (days+remaining)+" jours "+(date.getFullYear()-1);
                 newDroitN_1 = 0;
                 newDroitN = newDroitN + remaining;
                 rights += " + "+((-1)*remaining)+" jours "+date.getFullYear();
+            } else {
+                rights = days+" jours "+(date.getFullYear()-1);
             }
-            departure --;
-            console.log(rights);
+            departure--;
             
             const fieldsToUpdate = {
                 departsAutorisees: departure,
                 droitN_1: newDroitN_1,
                 droitN: newDroitN
             }
+            // employee.update(emp._id, fieldsToUpdate);
             
             //Update employee leave fields
-            employee.departsAutorisees = departure;
-            employee.droitN_1 = newDroitN_1;
-            employee.droitN = newDroitN;
-
-            employee.save();
+            emp.departsAutorisees = departure;
+            emp.droitN_1 = newDroitN_1;
+            emp.droitN = newDroitN;
 
             //Create new leave to database
             let newLeave = Leave({
-                empId: employee._id,
-                matricule: req.body.employeeId.toUpperCase(),
+                empId: emp._id,
+                matricule: emp.matricule,
                 startDate: req.body.startDate,
                 endDate: req.body.endDate,
                 type: "Administratif",
@@ -141,7 +140,8 @@ checkLeavePeriod = (start, end, req, res, employee) => {
             
             newLeave.save((err) => {
                 if (!err) {
-                    res.render("titre-conge-admin", {employee: employee, leave: newLeave});
+                    emp.save();
+                    res.render("titre-conge-admin", {employee: emp, leave: newLeave});
                 } else {
                     const noResult = {
                         type: "danger",
@@ -312,15 +312,14 @@ module.exports.cancelLeave = (leaveId, req, res) => {
 
             concernedEmployee.then((foundEmployee) => {
 
-                if (foundLeave.droitN == 26) {
-                    foundLeave.droitN_1 = parseInt(foundLeave.droitN_1) + numberOfDays;
+                if (foundEmployee.droitN == 26) {
+                    foundEmployee.droitN_1 = parseInt(foundEmployee.droitN_1) + numberOfDays;
                 } else {
                     const temp = (parseInt(foundEmployee.droitN) + numberOfDays) - 26;
-                    console.log(temp);
                     foundEmployee.droitN = (parseInt(foundEmployee.droitN) + numberOfDays) - temp;
                     foundEmployee.droitN_1 = parseInt(foundEmployee.droitN_1) + temp;
-                    foundEmployee.departsAutorisees = parseInt(foundEmployee.departsAutorisees) + 1;
                 }
+                foundEmployee.departsAutorisees = parseInt(foundEmployee.departsAutorisees) + 1;
                 foundEmployee.save();
 
             });
@@ -332,10 +331,102 @@ module.exports.cancelLeave = (leaveId, req, res) => {
     });
 }
 
+//Placed here to be used by the next function below this one
+const getHolidays = async () => {
+    const holidays = await Holiday.find();
+    return holidays;
+}
+
+//Stop employee's leave before it copmletes
+module.exports.stopLeave = (leaveId, req, res) => {
+    const resumeDate = new Date(req.body.resumeDate);
+    Leave.findById(leaveId, (err, leave) => {
+        if (!err) {
+            const beginning = new Date(leave.startDate);
+            const end = new Date(leave.endDate);
+
+            //check if the resume date is between the begining and the end of the leave
+            if (resumeDate < beginning || resumeDate > end) {
+                const alert = {
+                    type : "danger",
+                    message : "La date de reprise du travail ne correspond pas à la période du congé"
+                }
+                res.render("resume-work", {pageTitle: "Reprise de travail", leave: leave, alert: alert});
+            } else {
+                const tempDate = resumeDate;
+                let days = countLeaveDays(resumeDate, end)+1;
+                const daysToWork = [];
+
+                for (let index = 0; index < days; index++ ) {
+                    daysToWork.push(tempDate.toLocaleDateString());
+                    tempDate.setDate(tempDate.getDate()+1);
+                }
+
+                for (let i=0; i<daysToWork.length; i++) {
+                    let date = new Date(daysToWork[i]);
+                    if (date.getDay() === 0) {
+                        daysToWork.splice(i, 1);
+                    }
+                }
+
+                const holidaysToIgnore = getHolidays();
+                holidaysToIgnore.then((foundHolidays) => {
+                    foundHolidays.forEach(holiday => {
+                        const holidayDate = new Date(holiday.date);
+                        if (daysToWork.includes(holidayDate.toLocaleDateString())) {
+                            let index = daysToWork.indexOf(holidayDate.toLocaleDateString());
+                            daysToWork.splice(index, holiday.duration);
+                        }
+                    });
+                    //Rights to be returned to the employee
+                    days = daysToWork.length;
+
+                    //Update the changes to the employee
+                    const concernedEmployee = employee.getEmployeeById(leave.empId);
+
+                    concernedEmployee.then((foundEmployee) => {
+                        if (foundEmployee.droitN == 26) {
+                            foundEmployee.droitN_1 = parseInt(foundEmployee.droitN_1) + days;
+                        } else {
+                            const temp = (parseInt(foundEmployee.droitN) + days) - 26;
+                            foundEmployee.droitN = (parseInt(foundEmployee.droitN) + days) - temp;
+                            foundEmployee.droitN_1 = parseInt(foundEmployee.droitN_1) + temp;
+                        }
+                        foundEmployee.save();
+                    });
+
+                    //Update leave's changes
+                    const newEnd = new Date(req.body.resumeDate);
+                    newEnd.setDate(newEnd.getDate() - 1);
+                    console.log(newEnd);
+                    leave.endDate = newEnd.toLocaleDateString();
+                    leave.numberOfDays = leave.numberOfDays - days;
+                    leave.save((err) => {
+                        if (!err) {
+                            res.redirect("/historique");
+                        }
+                    })
+                })
+            }
+        }
+    })
+}
+
 //Delete leave by id
 module.exports.deleteLeave = (leaveId, res) => {
     Leave.findByIdAndRemove(leaveId, () => {
         res.redirect("/historique");
+    })
+}
+
+//Delete employee's leaves
+module.exports.deleteEmploeeLeaves = (employeeId, res) => {
+    Leave.deleteMany({empId: employeeId}, (err) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.render("/employee-list", {pageTitle: "Liste des Personnels"});
+        }
     })
 }
 

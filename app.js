@@ -48,6 +48,13 @@ passport.use(Admin.createStrategy());
 passport.serializeUser(Admin.serializeUser());
 passport.deserializeUser(Admin.deserializeUser());
 
+const updateSchema = new mongoose.Schema({
+    year : Number,
+    isUpdated : Boolean
+})
+
+const Update = new mongoose.model("Update", updateSchema);
+
 /********************************** Buisiness **********************************/
 
 // Authentication Page
@@ -108,6 +115,11 @@ app.get("/", (req, res) => {
     res.redirect("/accueil");
 });
 
+app.get("/logout", (req,res) => {
+    req.logout();
+    res.redirect("/");
+})
+
 /********************************** Leave Section **********************************/
 //Leave form
 app.get("/nouveau-conge-admin", (req, res) => {
@@ -152,6 +164,21 @@ app.get("/annuler-conge/:leaveId", (req,res) => {
     leave.cancelLeave(req.params.leaveId, req, res);
 })
 
+app.get("/reprise-travail/:leaveId", (req,res) => {
+    if (req.isAuthenticated()) {
+        const leaveToStop = leave.getLeaveById(req.params.leaveId);
+        leaveToStop.then((foundLeave) => {
+            res.render("resume-work", {pageTitle: "Reprise de travail", leave: foundLeave, alert: null});
+        })
+    } else {
+        res.render("authent", {pageTitle: "Authentification"});
+    }
+})
+
+app.post("/reprise-travail/:leaveId", (req,res) => {
+    leave.stopLeave(req.params.leaveId, req, res);
+})
+
 /********************************** Employee Section **********************************/
 //Employee List
 app.get("/list-personnel", (req, res) => {
@@ -170,7 +197,11 @@ app.post("/list-personnel", (req,res) => {
     
     const searchResult = employee.getEmployeeByMatricule(searchedMatricule);
     searchResult.then((foundEmployee) => {
-        res.render("employee-list", {pageTitle: "Liste des Personnels", employees: [foundEmployee]});
+        if (foundEmployee) {
+            res.render("employee-list", {pageTitle: "Liste des Personnels", employees: [foundEmployee]});
+        } else {
+            res.render("employee-list", {pageTitle: "Liste des Personnels", employees: []});
+        }
     })
 })
 
@@ -249,6 +280,22 @@ app.get("/nouveau-personnel", (req,res) => {
 app.post("/nouveau-personnel", (req,res) => {
     const empMatricule = req.body.matricul.toUpperCase();
     employee.newEmployee(empMatricule, req, res);
+})
+
+//Drop employee
+app.get("/confirmation-supression/:employeeId", (req,res) => {
+    if (req.isAuthenticated()) {
+        const employeeToDelete = employee.getEmployeeById(req.params.employeeId)
+        employeeToDelete.then((foundEmployee) => {
+            res.render("dropemp-confirmation", {pageTitle: "Confirmation du supression", employee: foundEmployee});
+        })
+    } else {
+        res.render("authent", {pageTitle: "Authentification"});
+    }
+})
+
+app.post("/confirmation-supression/:employeeId", (req,res) => {
+    employee.deleteEmployee(req.params.employeeId, res);
 })
 
 // Reliquats

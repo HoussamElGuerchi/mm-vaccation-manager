@@ -30,9 +30,9 @@
             </table>
         </div>
         <div class="container">
-            <form action="/personnel/<%= employee._id %> " method="POST">
+            <form action="/confirmation-supression/<%= employee._id %> " method="POST">
                 <a href="/modifier-personnel/<%= employee._id %>" class="btn btn-dark m-2">Modifier</a>
-                <button class="btn btn-outline-danger m-2">Supprimer</button>
+                <a href="/confirmation-supression/<%= employee._id %>" class="btn btn-outline-danger m-2">Supprimer</a>
             </form>
         </div>
         <hr>
@@ -66,15 +66,17 @@
                                 <td>
                                     <a href="/imprimer-titre/<%= leave._id %> " target="blank">Imprimer</a>
                                 </td>
-                                <td>
-                                <% const today = new Date(); %>
-                                <% const start = new Date(leave.startDate); %>
-                                <% if (today < start) { %> 
-                                    <a class="text-danger" href="/annuler-conge/<%= leave._id %>">Annuler</a>
-                                <% } else { %>
-                                    <a href="/reprise-travail/<%= leave._id %>">Reprise de Travail</a>
+                                <% if (leave.type === "Administratif") { %>
+                                    <td>
+                                        <%const today = new Date();%> 
+                                        <%const start = new Date(leave.startDate);%> 
+                                        <% if (today < start) { %> 
+                                            <a class="text-danger" href="/annuler-conge/<%= leave._id %>">Annuler</a>
+                                        <% } else { %>
+                                            <a class="text-warning" href="/reprise-travail/<%= leave._id %>">Reprise de Travail</a>
+                                        <% } %>
+                                    </td>
                                 <% } %>
-                                </td>
                             </tr>
                         <% }) %> 
                     </tbody>

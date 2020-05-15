@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const _ = require("lodash");
+const leave = require(__dirname + "/employee.js");
 
 /* Making connection */
 mongoose.connect('mongodb://localhost:27017/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true});
@@ -39,7 +40,7 @@ module.exports.getEmployeeById = async (id) => {
 }
 
 //Delete employee
-module.exports.deleteEmployee =  (employeeId, res) => {
+module.exports.deleteEmployee = (employeeId, res) => {
     Employee.findByIdAndRemove(employeeId, (err) => {
         if (err) {
             const alert = {
@@ -48,7 +49,7 @@ module.exports.deleteEmployee =  (employeeId, res) => {
             };
             res.render("employee-profile", {pageTitle: "Personnel", employee: foundEmployee, alert: alert});
         } else {
-            res.redirect("/list-personnel");
+            leave.deleteEmployeeLeaves(employeeId, res);
         }
     })
 }
@@ -79,9 +80,9 @@ module.exports.updateEmployee = (employeeId, req, res) => {
 }
 
 module.exports.update = (employeeId , fields) => {
-    Employee.findOne({_id: employeeId}, (err, foundEmployee) => {
+    Employee.findByIdAndUpdate(employeeId, fields, (err, emp) => {
         if (!err) {
-            console.log(foundEmployee);
+            console.log("Employee updated");
         }
     })
 }
