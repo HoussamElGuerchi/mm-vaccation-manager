@@ -9,6 +9,7 @@ const leave = require(__dirname + "/models/leave.js");
 const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
+let port = process.env.PORT;
 
 /***** Application Config *****/
 
@@ -336,7 +337,10 @@ app.get("/liste-jours-feries/:holidayId", (req,res) => {
 })
 
 /********************************** Server listener **********************************/
+if (port == null || port == "") {
+  port = 3000;
+}
 
-app.listen(3000, () => {
+app.listen(port, () => {
     console.log("Server started on port 3000");
 })
