@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 /***** Database Manipulation *****/
 
-mongoose.connect('mongodb://localhost:27017/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+mongoose.connect('mongodb+srv://admin-houssam:marsamarocagadir@cluster0-kgxxn.mongodb.net/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 
 const employeeSchema = new mongoose.Schema({
     matricule: {type: String, required: true},

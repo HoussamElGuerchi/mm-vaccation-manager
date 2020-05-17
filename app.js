@@ -27,7 +27,7 @@ app.use(passport.session());
 
 /***** Database Config *****/
 
-mongoose.connect('mongodb://localhost:27017/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+mongoose.connect('mongodb+srv://admin-houssam:marsamarocagadir@cluster0-kgxxn.mongodb.net/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 mongoose.set('useCreateIndex', true);
 
 const adminSchema = new mongoose.Schema({
@@ -47,13 +47,6 @@ passport.use(Admin.createStrategy());
  
 passport.serializeUser(Admin.serializeUser());
 passport.deserializeUser(Admin.deserializeUser());
-
-const updateSchema = new mongoose.Schema({
-    year : Number,
-    isUpdated : Boolean
-})
-
-const Update = new mongoose.model("Update", updateSchema);
 
 /********************************** Buisiness **********************************/
 
@@ -306,6 +299,10 @@ app.get("/reliquats", (req,res) => {
     } else {
         res.render("authent", {pageTitle: "Authentification"});
     }
+})
+
+app.post("/reliquats", (req,res) => {
+    employee.updateReliquats(req,res);
 })
 
 /********************************** Holidays Section **********************************/

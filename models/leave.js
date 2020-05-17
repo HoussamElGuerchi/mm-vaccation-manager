@@ -420,12 +420,12 @@ module.exports.deleteLeave = (leaveId, res) => {
 }
 
 //Delete employee's leaves
-module.exports.deleteEmploeeLeaves = (employeeId, res) => {
+module.exports.deleteEmployeeLeaves = (employeeId, res) => {
     Leave.deleteMany({empId: employeeId}, (err) => {
         if (err) {
             console.log(err);
         } else {
-            res.render("/employee-list", {pageTitle: "Liste des Personnels"});
+            res.redirect("/list-personnel");
         }
     })
 }

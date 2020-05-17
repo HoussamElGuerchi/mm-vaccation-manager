@@ -1,8 +1,18 @@
 <%- include("partials/header") %> 
 
     <div class="container content">
-        <h1 class="mt-5">Reliquats</h1>
+        <div class="row mt-5">
+            <div class="col-lg-10">
+                <h1 class="">Reliquats</h1>
+            </div>
+            <div class="col-lg-2" style="text-align: right;">
+                <form action="/reliquats" method="POST">
+                    <button type="submit" class="btn btn-outline-success mt-2">Mise à Jours</button>
+                </form>
+            </div>
+        </div>
         <% const today = new Date() %> 
+        <%- include("partials/alerts-handler") %>
         <table class="table table-bordered table-hover shadow-sm">
             <thead class="thead-dark">
                 <tr>

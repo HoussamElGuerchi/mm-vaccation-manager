@@ -2,7 +2,7 @@
 
     <div class="container center p-5 mt-5 shadow">
         <h1 class="text-warning"><i class="fas fa-exclamation-triangle"></i></h1>
-        <h3>Êtes-vous sûr de supprimer cet employé ?</h3>
+        <h3>Vous êtes sûr de supprimer cet employé ?</h3>
         <h5>Il sera impossible de récupérer les données de l'employé après sa supression</h5>
         <p><%= employee.matricule %>    &#9679;    <%=employee.nom%> <%=employee.prenom%>    &#9679;    <%= employee.fonction %>, <%= employee.entite %></p>
         <form action="/confirmation-supression/<%= employee._id %>" method="POST">
