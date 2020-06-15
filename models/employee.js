@@ -3,8 +3,8 @@ const _ = require("lodash");
 const leave = require(__dirname + "/leave.js");
 
 /* Making connection */
-// mongoose.connect('mongodb://localhost:27017/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true});
-mongoose.connect('mongodb+srv://admin-houssam:marsamarocagadir@cluster0-kgxxn.mongodb.net/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect('mongodb://localhost:27017/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true});
+// mongoose.connect('mongodb+srv://admin-houssam:marsamarocagadir@cluster0-kgxxn.mongodb.net/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true});
 
 /* Creating a schema */
 const employeeSchema = new mongoose.Schema({
@@ -45,6 +45,12 @@ module.exports.getEmployeeByMatricule = async (matricule) => {
 module.exports.getEmployeeById = async (id) => {
     const employee = await Employee.findOne({_id: id});
     return employee;
+}
+
+//Find one or more employees by a custom field
+module.exports.findEmployees = async (query) => {
+    const employees = await Employee.find(query);
+    return employees;
 }
 
 //Delete employee

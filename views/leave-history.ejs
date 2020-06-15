@@ -45,7 +45,8 @@
                             <td><%= leave.type %> </td>
                             <td><%= leave.numberOfDays %> jours </td>
                             <td>
-                                <a href="/imprimer-titre/<%= leave._id %>" target="blank">Imprimer</a>
+                                <!-- <a href="/imprimer-titre/<%= //leave._id %>" target="blank">Imprimer</a> -->
+                                <a href="/historique-personnel/<%= leave.empId %>" target="blank">Imprimer</a>
                             </td>
                             <% if (leave.type === "Administratif") { %>
                                 <td>

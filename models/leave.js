@@ -312,12 +312,17 @@ module.exports.cancelLeave = (leaveId, req, res) => {
 
             concernedEmployee.then((foundEmployee) => {
 
-                if (foundEmployee.droitN == 26) {
+                if (foundEmployee.droitN === "26") {
                     foundEmployee.droitN_1 = parseInt(foundEmployee.droitN_1) + numberOfDays;
                 } else {
-                    const temp = (parseInt(foundEmployee.droitN) + numberOfDays) - 26;
-                    foundEmployee.droitN = (parseInt(foundEmployee.droitN) + numberOfDays) - temp;
-                    foundEmployee.droitN_1 = parseInt(foundEmployee.droitN_1) + temp;
+                    const temp = parseInt(foundEmployee.droitN) + numberOfDays;
+                    if (temp > 26) {
+                        temp = (parseInt(foundEmployee.droitN) + numberOfDays) - 26;
+                        foundEmployee.droitN = (parseInt(foundEmployee.droitN) + numberOfDays) - temp;
+                        foundEmployee.droitN_1 = parseInt(foundEmployee.droitN_1) + temp;
+                    } else {
+                        foundEmployee.droitN = parseInt(foundEmployee.droitN) + numberOfDays;
+                    }
                 }
                 foundEmployee.departsAutorisees = parseInt(foundEmployee.departsAutorisees) + 1;
                 foundEmployee.save();

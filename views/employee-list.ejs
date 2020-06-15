@@ -7,10 +7,19 @@
         <div class="col-lg-10">
             <form action="/list-personnel" method="POST" class="form">
               <div class="row">
-                <div class="col">
-                  <input class="form-control mr-2" type="text" name="searchedMatricule" placeholder="Entrer la matricule à chercher..." aria-label="Search" required autocomplete="off">
+                <div class="col-lg-6">
+                  <input class="form-control mr-2" type="text" name="searchValue" placeholder="Chercher..." aria-label="Search" required autocomplete="off">
                 </div>
-                <div class="col">
+                <div class="col-lg-2">
+                  <select name="searchField" class="form-control">
+                    <option value="matricule">Matricule</option>
+                    <option value="nom">Nom</option>
+                    <option value="prenom">Prénom</option>
+                    <option value="fonction">Fonction</option>
+                    <option value="entite">Entité</option>
+                  </select>
+                </div>
+                <div class="col-lg-2">
                   <button class="btn btn-outline-primary" type="submit"> <i class="fas fa-search"></i> Chercher</button>
                 </div>
               </div>

@@ -1,0 +1,86 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique des congés</title>
+    <style>
+        body {
+            width: 1028px;
+            margin: auto;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        div {
+            margin: 30px auto;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        td, th {
+            padding: 10px;
+        }
+
+        .reliquats {
+            width: 100%;
+        }
+
+        .number {
+            text-align: center;
+        }
+
+        .conges {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <% const currentDate = new Date() %> 
+    <div>
+        <h1><%= employee.nom %> <%= employee.prenom %></h1>
+        <h3><%= employee.matricule %></h3>
+        <h3><%= employee.fonction %>, <%= employee.entite %></h3>
+    </div>
+    <hr>
+    <div>
+        <h3>Reliquats</h3>
+        <table class="reliquats">
+            <tr>
+                <td>Départ Autorisé</td>
+                <td class="number"><%= employee.departsAutorisees %></td>
+                <td>Droits Restants <%= (currentDate.getFullYear()-1) %> </td>
+                <td class="number"><%= employee.droitN_1 %></td>
+                <td>Droits Restants <%= currentDate.getFullYear() %></td>
+                <td class="number"><%= employee.droitN %></td>
+            </tr>
+        </table>
+    </div>
+    <hr>
+    <div>
+        <table class="conges">
+            <tr>
+                <th>Nature</th>
+                <th>Du</th>
+                <th>Au</th>
+                <th>Nbre des Jours</th>
+                <th>Droit</th>
+            </tr>
+            <% employeeLeaves.forEach(leave => { %>
+                <tr>
+                    <td><%= leave.type %> </td>
+                    <td><%= leave.startDate %> </td>
+                    <td><%= leave.endDate %> </td>
+                    <td><%= leave.numberOfDays %> </td>
+                    <% if (leave.type === "Administratif") { %>
+                        <td><%= leave.executedRights %></td>
+                    <% } else { %>
+                    <td></td>
+                    <% } %>
+                </tr>
+            <% }) %>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,19 +1,26 @@
-<%- include("partials/header") %> 
+<%- include("partials/header") %>
 
     <div class="container content">
         <div class="row mt-5">
-            <div class="col-lg-10">
+            <div class="col-lg-8">
                 <h1 class="">Reliquats</h1>
             </div>
-            <div class="col-lg-2" style="text-align: right;">
-                <form action="/reliquats" method="POST">
-                    <button type="submit" class="btn btn-outline-success mt-2">Mise à Jours</button>
+            <div class="col-lg-4">
+                <form action="/reliquats" method="POST" style="text-align: left;">
+                    <div class="row">
+                        <div class="col" style="text-align: right;">
+                            <a href="/impression-reliquat" target="blank" class="btn btn-primary mt-2">Imprimer</a>
+                        </div>
+                        <div class="col" style="text-align: right;">
+                            <button type="submit" class="btn btn-outline-primary mt-2">Mise à Jours</button>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
         <% const today = new Date() %> 
         <%- include("partials/alerts-handler") %>
-        <table class="table table-bordered table-hover shadow-sm">
+        <table id="reliquats" class="table table-bordered table-hover shadow-sm">
             <thead class="thead-dark">
                 <tr>
                     <th>Matricule</th>

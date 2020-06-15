@@ -1,0 +1,56 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impression des reliquats</title>
+    <style>
+        .container {
+            width: 1028px;
+            margin: auto;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        td, th {
+            padding: 10px;
+        }
+
+        .number {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <% const currentDate = new Date() %> 
+    <div class="container">
+        <h1>Situation des reliquats de congé</h1>
+        <table>
+            <tr>
+                <th>Matricule</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Départs Autorisées</th>
+                <th>Droit <%= (currentDate.getFullYear() - 1) %> </th>
+                <th>Droit <%= currentDate.getFullYear() %> </th>
+            </tr>
+            <% reliquats.forEach(reliquat => { %>
+                <tr>
+                    <td><%= reliquat.matricule %> </td>
+                    <td><%= reliquat.nom %> </td>
+                    <td><%= reliquat.prenom %> </td>
+                    <td class="number"><%= reliquat.departs %> </td>
+                    <td class="number"><%= reliquat.droitN_1 %> </td>
+                    <td class="number"><%= reliquat.droitN %> </td>
+                </tr>
+            <% }) %>
+        </table>
+    </div>
+</body>
+</html>

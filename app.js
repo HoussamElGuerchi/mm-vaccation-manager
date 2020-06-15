@@ -27,8 +27,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 /***** Database Config *****/
-
-mongoose.connect('mongodb+srv://admin-houssam:marsamarocagadir@cluster0-kgxxn.mongodb.net/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+mongoose.connect('mongodb://localhost:27017/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true});
+// mongoose.connect('mongodb+srv://admin-houssam:marsamarocagadir@cluster0-kgxxn.mongodb.net/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 mongoose.set('useCreateIndex', true);
 
 const adminSchema = new mongoose.Schema({
@@ -173,6 +173,16 @@ app.post("/reprise-travail/:leaveId", (req,res) => {
     leave.stopLeave(req.params.leaveId, req, res);
 })
 
+app.get("/historique-personnel/:employeeId", (req,res) => {
+    const concernedEmployee = employee.getEmployeeById(req.params.employeeId);
+    concernedEmployee.then((foundEmployee) => {
+        const leaves = leave.getLeavesById(req.params.employeeId);
+        leaves.then((foundLeaves) => {
+            res.render("employee-leave-history", {employee: foundEmployee ,employeeLeaves: foundLeaves});
+        })
+    })
+})
+
 /********************************** Employee Section **********************************/
 //Employee List
 app.get("/list-personnel", (req, res) => {
@@ -187,16 +197,14 @@ app.get("/list-personnel", (req, res) => {
 })
 
 app.post("/list-personnel", (req,res) => {
-    const searchedMatricule = req.body.searchedMatricule.toUpperCase();
-    
-    const searchResult = employee.getEmployeeByMatricule(searchedMatricule);
-    searchResult.then((foundEmployee) => {
-        if (foundEmployee) {
-            res.render("employee-list", {pageTitle: "Liste des Personnels", employees: [foundEmployee]});
-        } else {
-            res.render("employee-list", {pageTitle: "Liste des Personnels", employees: []});
-        }
-    })
+    const query = {
+        [req.body.searchField]: req.body.searchValue
+    }
+
+    const result = employee.findEmployees(query);
+    result.then(
+        (foundEmployees) => res.render("employee-list", {pageTitle: "Liste des Personnels", employees: foundEmployees})
+    );
 })
 
 //Employee profile
@@ -304,6 +312,28 @@ app.get("/reliquats", (req,res) => {
 
 app.post("/reliquats", (req,res) => {
     employee.updateReliquats(req,res);
+})
+
+app.get("/impression-reliquat", (req, res) => {
+    const employees = employee.getEmployees();
+    employees.then((result) => {
+        const reliquats = [];
+
+        result.forEach(rslt => {
+            const reliquat = {
+                matricule: rslt.matricule,
+                nom: rslt.nom,
+                prenom: rslt.prenom,
+                departs: rslt.departsAutorisees,
+                droitN_1: rslt.droitN_1,
+                droitN: rslt.droitN
+            }
+
+            reliquats.push(reliquat);
+        });
+
+        res.render("impression-reliquats", {reliquats: reliquats});
+    }) 
 })
 
 /********************************** Holidays Section **********************************/
