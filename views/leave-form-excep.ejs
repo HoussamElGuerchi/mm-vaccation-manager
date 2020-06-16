@@ -5,32 +5,28 @@
         <form action="/nouveau-conge-excep" method="POST">
             <div class="form-group">
                 <div class="form-group">
-                    <label for="">Matricule :</label>
+                    <label for="">Matricule</label>
                     <input type="text" name="employeeId" class="form-control" required autocomplete="off" placeholder="Exemple: A01xxx">
                 </div>
-                <label for="">Période de validité :</label>
+                <div class="form-group">
+                    <label for="">Nature</label>
+                    <select id="nature" name="leaveType" class="form-control">
+                        <% excepLeaves.forEach(element => { %>
+                            <option value="<%= element.nature %>" class="<%= element.nature.replace(/ /g, "") %>"><%= element.nature %></option>
+                        <% }) %>
+                    </select>
+                </div>
+                <label for="">Période de validité</label>
                     <div class="row">
                         <div class="col">
-                            <label for="">Du :</label>
+                            <label for="">Du</label>
                             <input type="date" name="startDate" class="form-control" required>
                         </div>
                         <div class="col">
-                            <label for="">Au :</label>
-                            <input type="date" name="endDate" class="form-control" required>
+                            <label>Durée</label>
+                            <input type="number" id="duree" name="duree" class="form-control" value="<%= excepLeaves[0].duree %>" required />
                         </div>
                     </div>
-                <div class="form-group">
-                    <label for="">Nature :</label>
-                    <select name="leaveType" class="form-control">
-                        <option value="Maternite">Maternité</option>
-                        <option value="Maladie Professionnelles ou Accident de travail">Maladie Professionnelles ou Accident de travail</option>
-                        <option value="Mariage">Mariage</option>
-                        <option value="Naissance">Naissance</option>
-                        <option value="Deces">Décès</option>
-                        <option value="Circoncision">Circoncision</option>
-                        <option value="Hospitalisation du conjoint ou d'un enfant">Hospitalisation du conjoint ou d'un enfant</option>
-                    </select>
-                </div>
             </div>
             <div class="center p-3">
                 <button type="submit" class="btn btn-success m-2">Ajouter</button>
@@ -38,9 +34,23 @@
             </div>
         </form>
 
+        <div style="display: none;">
+            <% excepLeaves.forEach(element => { %>
+                <input type="number" id="<%= element.nature.replace(/ /g, "") %>" value="<%= element.duree %>" />
+            <% }) %>
+        </div>
+
         <% if (alert) { %>
             <%- include("partials/alerts-handler") %> 
         <% } %>
+
+        <script>
+            $("#nature").change(() => {
+                var selectedType = $("#nature").val();
+                var duration = $("#"+selectedType.replace(/ /g, "")).val();
+                $("#duree").val(parseInt(duration));
+            });
+        </script>
 
     </div>
     

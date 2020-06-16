@@ -43,7 +43,10 @@
                     Aucun congé trouvé pour ce personnel.
                 </div>
             <% } else { %>
-                <table class="table table-bordered table-hover shadow-sm mt-4">
+                <div style="text-align: right;">
+                    <a class="btn btn-primary btn-sm" href="/historique-personnel/<%= employee._id %>" target="blank">Imprimer</a>
+                </div>
+                <table class="table table-bordered table-hover shadow-sm mt-3">
                     <thead class="thead-dark">
                         <tr>
                             <th>Matricule</th>

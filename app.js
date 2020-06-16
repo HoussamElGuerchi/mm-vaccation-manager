@@ -130,7 +130,10 @@ app.post("/nouveau-conge-admin", (req, res) => {
 
 app.get("/nouveau-conge-excep", (req, res) => {
     if (req.isAuthenticated()) {
-        res.render("leave-form-excep", {pageTitle: "Nouveau Congé", alert: null});
+        const excepLeaves = leave.getExcepLeaves();
+        excepLeaves.then((result) => {
+            res.render("leave-form-excep", {pageTitle: "Nouveau Congé", excepLeaves: result, alert: null});
+        })
     } else {
         res.render("authent", {pageTitle: "Authentification"});
     }
@@ -181,6 +184,30 @@ app.get("/historique-personnel/:employeeId", (req,res) => {
             res.render("employee-leave-history", {employee: foundEmployee ,employeeLeaves: foundLeaves});
         })
     })
+})
+
+app.get("/conges-excep", (req,res) => {
+    if (req.isAuthenticated()) {
+        const excepLeaves = leave.getExcepLeaves();
+        excepLeaves.then((result) => {
+            res.render("excep-leaves-list", {pageTitle: "Congés Exceptionnels", excepLeaves: result});
+        })
+    } else {
+        res.render("authent", {pageTitle: "Authentification"});
+    }
+})
+
+app.post("/conges-excep", (req,res) => {
+    if (req.isAuthenticated()) {
+        const newExcepLeave = {
+            nature: req.body.nature,
+            duree: req.body.duree
+        }
+
+        leave.addExcepLeave(newExcepLeave, res);
+    } else {
+        res.render("authent", {pageTitle: "Authentification"});
+    }
 })
 
 /********************************** Employee Section **********************************/

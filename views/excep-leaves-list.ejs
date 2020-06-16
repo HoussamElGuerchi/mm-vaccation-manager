@@ -1,0 +1,50 @@
+<%- include("partials/header") %> 
+    <div class="container mt-2 p-5 content">
+        <h1>Congés Exceptionnels</h1>
+        <div class="mt-5 mb-5">
+            <h5>Nouveau Congé Exceptionnel</h5>
+            <form method="POST" action="/conges-excep">
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label>Nature</label>
+                            <input type="text" class="form-control" name="nature" required autocomplete="off"/>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <label>Durée</label>
+                        <input type="number" class="form-control" name="duree" required autocomplete="off" />
+                    </div>
+                </div>
+                <div class="center m-3">
+                    <button type="submit" class="btn btn-success" style="margin-right: 10px;">Ajouter</button>
+                    <button type="reset" class="btn btn-outline-danger">Annuler</button>
+                </div>
+            </form>
+        </div>
+        <hr>
+        <div class="mt-5">
+            <h5>Liste des Congés Exceptionnels</h5>
+            <table class="table table-bordered table-hover shadow mt-4">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Nature</th>
+                        <th>Durée</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% excepLeaves.forEach(leave => { %>
+                        <tr>
+                            <td><%= leave.nature %></td>
+                            <td><%= leave.duree %></td>
+                            <td>
+                                <a class="text-danger" href="#">Supprimer</a>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+<%- include("partials/footer") %> 

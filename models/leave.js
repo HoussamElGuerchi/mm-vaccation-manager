@@ -35,6 +35,13 @@ const leaveSchema = new mongoose.Schema({
 
 const Leave = new mongoose.model("Leave", leaveSchema);
 
+const excepLeaveSchema = new mongoose.Schema({
+    nature: {type: String, required: true},
+    duree: {type: Number, required: true}
+})
+
+const ExcepLeave = new mongoose.model("ExcepLeave", excepLeaveSchema);
+
 /********************************************************************/
 
 checkLeavePeriod = (start, end, req, res, emp) => {
@@ -476,4 +483,16 @@ module.exports.deleteHoliday = (holidayId, res) => {
             res.redirect("/liste-jours-feries");
         }
     })
+}
+
+/********************************************************************/
+
+module.exports.addExcepLeave = (object, response) => {
+    const newExcepLeave = new ExcepLeave(object);
+    newExcepLeave.save().then(() => response.render("excep-leaves-list", {pageTitle: "Congés Exceptionnels"}));
+}
+
+module.exports.getExcepLeaves = async () => {
+    const excepLeaves = await ExcepLeave.find();
+    return excepLeaves;
 }
