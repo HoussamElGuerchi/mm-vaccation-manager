@@ -221,34 +221,36 @@ module.exports.newLeaveAdmin = (req,res) => {
 
 module.exports.newLeaveExcep = (req, res) => {
 
-    if ((req.body.startDate > req.body.endDate)) {
-        const alert = {
-            type: "danger",
-            message: "Période du congé invalide, veuillez vérifier la date de début et la date du fin."
-        }
-        res.render("leave-form-excep", {pageTitle: "Nouveau Congé", alert: alert});
-    } else {
-        const empMatricule = req.body.employeeId.toUpperCase();
+    const empMatricule = req.body.employeeId.toUpperCase();
 
-        const searchResult = employee.getEmployeeByMatricule(empMatricule);
-        searchResult.then((foundEmployee) => {
+    const searchResult = employee.getEmployeeByMatricule(empMatricule);
+    searchResult.then((foundEmployee) => {
 
-            if (foundEmployee.length === 0) {
+
+        const query = ExcepLeave.find();
+        query.exec((err, excepLeaves) => {
+
+            if (!foundEmployee) {
                 const noResult = {
                     type: "danger",
                     message: "Le matricule ne correspond à aucun personnel."
                 }
-                res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: noResult});
+                res.render("leave-form-excep", {pageTitle: "Nouveau Congé", excepLeaves: excepLeaves, alert: noResult});
             } else {
+                const start = new Date(req.body.startDate);
+                const duree = parseInt(req.body.duree);
+                const end = new Date(req.body.startDate);
+                end.setDate(end.getDate() + duree - 1);
+    
                 const newLeave = Leave({
                     empId: foundEmployee._id,
                     matricule: empMatricule,
-                    startDate: req.body.startDate,
-                    endDate: req.body.endDate,
+                    startDate: start.toLocaleDateString(),
+                    endDate: end.toLocaleDateString(),
                     type: req.body.leaveType,
-                    numberOfDays: countLeaveDays(new Date(req.body.startDate), new Date(req.body.endDate))+1
+                    numberOfDays: duree
                 });
-                
+
                 newLeave.save((err) => {
                     if (!err) {
                         res.render("titre-conge-excep", {employee: foundEmployee, leave: newLeave});
@@ -257,13 +259,14 @@ module.exports.newLeaveExcep = (req, res) => {
                             type: "danger",
                             message: err
                         }
-                        res.render("leave-form-admin", {pageTitle: "Nouveau Congé", alert: noResult});
+                        res.render("leave-form-excep", {pageTitle: "Nouveau Congé", excepLeaves: excepLeaves, alert: noResult});
                     }
                 });
             }
 
         })
-    }
+
+    })
 
 }
 
@@ -486,13 +489,19 @@ module.exports.deleteHoliday = (holidayId, res) => {
 }
 
 /********************************************************************/
-
-module.exports.addExcepLeave = (object, response) => {
-    const newExcepLeave = new ExcepLeave(object);
-    newExcepLeave.save().then(() => response.render("excep-leaves-list", {pageTitle: "Congés Exceptionnels"}));
-}
-
 module.exports.getExcepLeaves = async () => {
     const excepLeaves = await ExcepLeave.find();
     return excepLeaves;
+}
+
+module.exports.addExcepLeave = (object, response) => {
+    const newExcepLeave = new ExcepLeave(object);
+    newExcepLeave.save().then(() => {
+        response.redirect("/conges-excep");
+        // response.render("excep-leaves-list", {pageTitle: "Congés Exceptionnels"})
+    });
+}
+
+module.exports.deleteExcepLeave = (leaveId, response) => {
+    ExcepLeave.findByIdAndDelete(leaveId, () => response.redirect("/conges-excep"));
 }

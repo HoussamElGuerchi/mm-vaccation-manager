@@ -190,6 +190,7 @@ app.get("/conges-excep", (req,res) => {
     if (req.isAuthenticated()) {
         const excepLeaves = leave.getExcepLeaves();
         excepLeaves.then((result) => {
+            console.log(req.IncomingMessage);
             res.render("excep-leaves-list", {pageTitle: "Congés Exceptionnels", excepLeaves: result});
         })
     } else {
@@ -203,8 +204,15 @@ app.post("/conges-excep", (req,res) => {
             nature: req.body.nature,
             duree: req.body.duree
         }
-
         leave.addExcepLeave(newExcepLeave, res);
+    } else {
+        res.render("authent", {pageTitle: "Authentification"});
+    }
+})
+
+app.get("/supprimer-conge-excep/:excepLeaveId", (req,res) => {
+    if (req.isAuthenticated()) {
+        leave.deleteExcepLeave(req.params.excepLeaveId, res);
     } else {
         res.render("authent", {pageTitle: "Authentification"});
     }

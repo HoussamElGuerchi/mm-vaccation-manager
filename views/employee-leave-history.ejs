@@ -67,6 +67,7 @@
                 <th>Nbre des Jours</th>
                 <th>Droit</th>
             </tr>
+            <% employeeLeaves.reverse() %> 
             <% employeeLeaves.forEach(leave => { %>
                 <tr>
                     <td><%= leave.type %> </td>

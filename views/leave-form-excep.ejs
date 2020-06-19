@@ -24,7 +24,7 @@
                         </div>
                         <div class="col">
                             <label>Durée</label>
-                            <input type="number" id="duree" name="duree" class="form-control" value="<%= excepLeaves[0].duree %>" required />
+                            <input type="number" id="duree" name="duree" class="form-control" value="<%= excepLeaves[0].duree %>" required disabled />
                         </div>
                     </div>
             </div>
@@ -36,7 +36,7 @@
 
         <div style="display: none;">
             <% excepLeaves.forEach(element => { %>
-                <input type="number" id="<%= element.nature.replace(/ /g, "") %>" value="<%= element.duree %>" />
+                <input type="number" id="<%= element.nature.replace(/[ \']/g, "") %>" value="<%= element.duree %>" />
             <% }) %>
         </div>
 
@@ -47,8 +47,16 @@
         <script>
             $("#nature").change(() => {
                 var selectedType = $("#nature").val();
-                var duration = $("#"+selectedType.replace(/ /g, "")).val();
-                $("#duree").val(parseInt(duration));
+                var duration = $("#"+selectedType.replace(/[ \']/g, "")).val();
+
+                selectedType === "Accident de travail ou maladies professionnelles" ? $("#duree").attr("disabled", false) : $("#duree").attr("disabled", true);
+
+                // $("#duree").val(parseInt(duration));
+                // if (selectedType === "Accident de travail ou maladies professionnelles") {
+                //     $("#duree").attr("disabled", false);
+                // } else {
+                //     $("#duree").attr("disabled", true);
+                // }
             });
         </script>
 
