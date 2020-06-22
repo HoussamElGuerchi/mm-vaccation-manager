@@ -4,18 +4,21 @@
         <h1 class="mt-4 mb-4">Historique des Congés</h1>
         <hr>
         <div class="row">
-        <div class="col-lg-10">
-            <form action="/historique" method="POST" class="form">
-                <div class="row">
-                <div class="col">
-                    <input class="form-control mr-2" type="text" name="searchedMatricule" placeholder="Entrer la matricule à chercher..." aria-label="Search" required autocomplete="off">
-                </div>
-                <div class="col">
-                    <button class="btn btn-outline-primary" type="submit"> <i class="fas fa-search"></i> Chercher</button>
-                </div>
-                </div>
-            </form>
-        </div>
+            <div class="col-lg-10">
+                <form action="/historique" method="POST" class="form">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <input class="form-control mr-2" type="text" name="searchedMatricule" placeholder="Entrer la matricule à chercher..." aria-label="Search" required autocomplete="off">
+                        </div>
+                        <div class="col-lg-2">
+                            <button class="btn btn-outline-primary btn-block" type="submit"> <i class="fas fa-search"></i> Chercher</button>
+                        </div>
+                        <div class="col-lg-2">
+                            <button id="excel" class="btn btn-outline-success btn-block"><i class="far fa-file-excel"></i> Excel</button> 
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
         <a href="#list-header" class="float">
             <i class="fas fa-arrow-up my-float"></i>
@@ -63,7 +66,46 @@
                     <% }) %> 
                 </tbody>
             </table>
+            <table id="historique" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Matricule</th>
+                        <th>Du</th>
+                        <th>Au</th>
+                        <th>Nature</th>
+                        <th>Nombre de jours</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% leaveList.forEach(leave => { %>
+                        <tr>
+                            <td><a href="/personnel/<%= leave.empId %> "><%= leave.matricule %></a></td>
+                            <td><%= leave.startDate %> </td>
+                            <td><%= leave.endDate %> </td>
+                            <td><%= leave.type %> </td>
+                            <td><%= leave.numberOfDays %> jours </td>
+                        </tr>
+                    <% }) %> 
+                </tbody>
+            </table>
         <% } %> 
     </div>
+
+    <script lang="javascript" src="./scripts/xlsx.full.min.js"></script>
+    <script lang="javascript" src="./scripts/FileSaver.min.js"></script>
+
+    <script>
+        var wb = XLSX.utils.table_to_book(document.getElementById('historique'), {sheet:"Sheet JS"});
+        var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
+        function s2ab(s) {
+                        var buf = new ArrayBuffer(s.length);
+                        var view = new Uint8Array(buf);
+                        for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+                        return buf;
+        }
+        $("#excel").click(function(){
+            saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), 'historique-conges.xlsx');
+        });
+    </script>
 
 <%- include("partials/footer") %> 
