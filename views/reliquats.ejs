@@ -42,4 +42,22 @@
         </table>
     </div>
 
+    <script lang="javascript" src="./scripts/xlsx.core.min.js"></script>
+    <script lang="javascript" src="./scripts/xlsx.full.min.js"></script>
+    <script lang="javascript" src="./scripts/FileSaver.min.js"></script>
+    <script lang="javascript" src="./scripts/tableexport.min.js"></script>
+
+    <script>
+        var currentDate = new Date();
+
+        $("#reliquats").tableExport({
+            formats: ["xlsx"],
+            filename: "reliquats_"+currentDate.toLocaleDateString(),
+            position: "top"
+        });
+
+        $(".xlsx").text("Exporter vers Excel");
+        $(".xlsx").attr("class", "xlsx btn-outline-success");
+    </script>
+
 <%- include("partials/footer") %> 
