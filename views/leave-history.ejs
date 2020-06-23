@@ -13,9 +13,6 @@
                         <div class="col-lg-2">
                             <button class="btn btn-outline-primary btn-block" type="submit"> <i class="fas fa-search"></i> Chercher</button>
                         </div>
-                        <div class="col-lg-2">
-                            <button id="excel" class="btn btn-outline-success btn-block"><i class="far fa-file-excel"></i> Excel</button> 
-                        </div>
                     </div>
                 </form>
             </div>
@@ -27,7 +24,7 @@
         <% if (alert) { %>
             <%- include("partials/alerts-handler") %> 
         <% } else { %>
-            <table class="table table-bordered table-hover shadow-sm">
+            <table id="historique" class="table table-bordered table-hover shadow-sm">
                 <thead class="thead-dark">
                     <tr>
                         <th>Matricule</th>
@@ -66,46 +63,26 @@
                     <% }) %> 
                 </tbody>
             </table>
-            <table id="historique" style="display: none;">
-                <thead>
-                    <tr>
-                        <th>Matricule</th>
-                        <th>Du</th>
-                        <th>Au</th>
-                        <th>Nature</th>
-                        <th>Nombre de jours</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% leaveList.forEach(leave => { %>
-                        <tr>
-                            <td><a href="/personnel/<%= leave.empId %> "><%= leave.matricule %></a></td>
-                            <td><%= leave.startDate %> </td>
-                            <td><%= leave.endDate %> </td>
-                            <td><%= leave.type %> </td>
-                            <td><%= leave.numberOfDays %> jours </td>
-                        </tr>
-                    <% }) %> 
-                </tbody>
-            </table>
         <% } %> 
     </div>
 
+    <script lang="javascript" src="./scripts/xlsx.core.min.js"></script>
     <script lang="javascript" src="./scripts/xlsx.full.min.js"></script>
     <script lang="javascript" src="./scripts/FileSaver.min.js"></script>
+    <script lang="javascript" src="./scripts/tableexport.min.js"></script>
 
     <script>
-        var wb = XLSX.utils.table_to_book(document.getElementById('historique'), {sheet:"Sheet JS"});
-        var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
-        function s2ab(s) {
-                        var buf = new ArrayBuffer(s.length);
-                        var view = new Uint8Array(buf);
-                        for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
-                        return buf;
-        }
-        $("#excel").click(function(){
-            saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), 'historique-conges.xlsx');
+        var currentDate = new Date();
+
+        $("#historique").tableExport({
+            formats: ["xlsx"],
+            filename: "historique_conges_"+currentDate.toLocaleDateString(),
+            ignoreCols: [5,6],
+            position: "top"
         });
+
+        $(".xlsx").text("Exporter vers Excel");
+        $(".xlsx").attr("class", "xlsx btn-outline-success");
     </script>
 
 <%- include("partials/footer") %> 
