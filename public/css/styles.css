@@ -59,3 +59,8 @@ form {
 .chef {
     text-align: right;
 }
+
+.xlsx {
+    padding: 6px 12px;
+    border-radius: .25rem;
+}

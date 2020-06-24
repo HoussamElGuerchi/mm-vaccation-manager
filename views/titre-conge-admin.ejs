@@ -21,8 +21,8 @@
         }
         td, th {
             text-align: left;
-            padding-top: 2%;
-            padding-bottom: 2%;
+            padding-top: 3%;
+            padding-bottom: 3%;
         }
         .leave-desc {
             margin-top: 70px;
@@ -41,20 +41,24 @@
         .chef {
             margin-top: 70px;
         }
+        .bordered {
+            border: 1px solid black;
+            padding: 6px 12px;
+        }
     </style>
 </head>
 <body>
     <div>
         <% let date = new Date() %>
         <div class="center">
-            <h1>Titre de conge administratif <br>
-            N°................../D/DRH/<%= date.getFullYear() %></h1>
+            <h1>Titre de conge administratif </h1>
+            <h3>N°................../D/DRH/<%= date.getFullYear() %></h3>
         </div>
         <table class="leave-desc m-3">
             <tbody>
                 <tr>
                     <th>Nombre de jours :</th>
-                    <td><%= leave.numberOfDays %></td>
+                    <td><%= leave.numberOfDays %> Jours ouvrables</td>
                 </tr>
                 <tr>
                     <th>Période de validité :</th>
@@ -90,14 +94,18 @@
                     <th>Entité :</th>
                     <td><%= employee.entite %></td>
                 </tr>
+                <tr>
+                    <th>Destination :</th>
+                    <td>Maroc et étranger</td>
+                </tr>
             </tbody>
         </table>
         <div class="right m-3">
                 <p class="mb-5"><b>LE CHEF DE LA DIVISION DES</b><br><b>RESSOURCES HUMAINES</b></p>
         </div>
         <div class="m-3">
-            <h3>Reliquats</h3>
-            <table>
+            <h3 class="bordered" style="width: 100px;">Reliquats</h3>
+            <table class="bordered">
                 <tbody>
                     <tr>
                         <th>Départs autorisés <%= date.getFullYear() %> :</th>

@@ -13,8 +13,8 @@ app.use(express.static("public"));
 
 /***** Database Manipulation *****/
 
-// mongoose.connect('mongodb://localhost:27017/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
-mongoose.connect('mongodb+srv://admin-houssam:marsamarocagadir@cluster0-kgxxn.mongodb.net/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+mongoose.connect('mongodb://localhost:27017/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+// mongoose.connect('mongodb+srv://admin-houssam:marsamarocagadir@cluster0-kgxxn.mongodb.net/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 
 const holidaySchema = new mongoose.Schema({
     title: {type: String, required: true},
@@ -223,14 +223,11 @@ module.exports.newLeaveAdmin = (req,res) => {
 module.exports.newLeaveExcep = (req, res) => {
 
     const empMatricule = req.body.employeeId.toUpperCase();
-
     const searchResult = employee.getEmployeeByMatricule(empMatricule);
     searchResult.then((foundEmployee) => {
-
-
+        //Check employee if exist
         const query = ExcepLeave.find();
         query.exec((err, excepLeaves) => {
-
             if (!foundEmployee) {
                 const noResult = {
                     type: "danger",
@@ -238,33 +235,42 @@ module.exports.newLeaveExcep = (req, res) => {
                 }
                 res.render("leave-form-excep", {pageTitle: "Nouveau Congé", excepLeaves: excepLeaves, alert: noResult});
             } else {
-                const start = new Date(req.body.startDate);
-                const duree = parseInt(req.body.duree);
-                const end = new Date(req.body.startDate);
-                end.setDate(end.getDate() + duree - 1);
-    
-                const newLeave = Leave({
-                    empId: foundEmployee._id,
-                    matricule: empMatricule,
-                    startDate: start.toLocaleDateString(),
-                    endDate: end.toLocaleDateString(),
-                    type: req.body.leaveType,
-                    numberOfDays: duree
-                });
-
-                newLeave.save((err) => {
-                    if (!err) {
-                        res.render("titre-conge-excep", {employee: foundEmployee, leave: newLeave});
-                    } else {
-                        const noResult = {
+                const checkPilgrimage = Leave.findOne({matricule: empMatricule, type: "Pèlerinage"}, (err, result) => {
+                    if (result) {
+                        const alreadyTaken = {
                             type: "danger",
-                            message: err
+                            message: "Un congé exceptionnel de nature pèlerinage est déjà pris par ce personnel."
                         }
-                        res.render("leave-form-excep", {pageTitle: "Nouveau Congé", excepLeaves: excepLeaves, alert: noResult});
+                        res.render("leave-form-excep", {pageTitle: "Nouveau Congé", excepLeaves: excepLeaves, alert: alreadyTaken});
+                    } else {
+                        const start = new Date(req.body.startDate);
+                        const duree = parseInt(req.body.duree);
+                        const end = new Date(req.body.startDate);
+                        end.setDate(end.getDate() + duree - 1);
+            
+                        const newLeave = Leave({
+                            empId: foundEmployee._id,
+                            matricule: empMatricule,
+                            startDate: start.toLocaleDateString(),
+                            endDate: end.toLocaleDateString(),
+                            type: req.body.leaveType,
+                            numberOfDays: duree
+                        });
+
+                        newLeave.save((err) => {
+                            if (!err) {
+                                res.render("titre-conge-excep", {employee: foundEmployee, leave: newLeave});
+                            } else {
+                                const noResult = {
+                                    type: "danger",
+                                    message: err
+                                }
+                                res.render("leave-form-excep", {pageTitle: "Nouveau Congé", excepLeaves: excepLeaves, alert: noResult});
+                            }
+                        });
                     }
                 });
             }
-
         })
 
     })
