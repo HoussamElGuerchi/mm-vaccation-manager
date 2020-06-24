@@ -27,8 +27,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 /***** Database Config *****/
-mongoose.connect('mongodb://localhost:27017/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true});
-// mongoose.connect('mongodb+srv://admin-houssam:marsamarocagadir@cluster0-kgxxn.mongodb.net/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+// mongoose.connect('mongodb://localhost:27017/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect('mongodb+srv://admin-houssam:marsamarocagadir@cluster0-kgxxn.mongodb.net/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 mongoose.set('useCreateIndex', true);
 
 const adminSchema = new mongoose.Schema({

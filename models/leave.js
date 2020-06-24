@@ -13,8 +13,8 @@ app.use(express.static("public"));
 
 /***** Database Manipulation *****/
 
-mongoose.connect('mongodb://localhost:27017/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
-// mongoose.connect('mongodb+srv://admin-houssam:marsamarocagadir@cluster0-kgxxn.mongodb.net/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+// mongoose.connect('mongodb://localhost:27017/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+mongoose.connect('mongodb+srv://admin-houssam:marsamarocagadir@cluster0-kgxxn.mongodb.net/leaveDB', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 
 const holidaySchema = new mongoose.Schema({
     title: {type: String, required: true},
