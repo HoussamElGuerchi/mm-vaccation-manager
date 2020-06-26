@@ -332,7 +332,7 @@ module.exports.cancelLeave = (leaveId, req, res) => {
                 if (foundEmployee.droitN === "26") {
                     foundEmployee.droitN_1 = parseInt(foundEmployee.droitN_1) + numberOfDays;
                 } else {
-                    const temp = parseInt(foundEmployee.droitN) + numberOfDays;
+                    let temp = parseInt(foundEmployee.droitN) + numberOfDays;
                     if (temp > 26) {
                         temp = (parseInt(foundEmployee.droitN) + numberOfDays) - 26;
                         foundEmployee.droitN = (parseInt(foundEmployee.droitN) + numberOfDays) - temp;
@@ -344,10 +344,9 @@ module.exports.cancelLeave = (leaveId, req, res) => {
                 foundEmployee.departsAutorisees = parseInt(foundEmployee.departsAutorisees) + 1;
                 foundEmployee.save();
 
-            });
-
-            Leave.findByIdAndRemove(leaveId, () => {
-                res.redirect("/historique");
+                Leave.findByIdAndRemove(leaveId, () => {
+                    res.redirect("/historique");
+                });
             });
         }
     });
@@ -375,9 +374,9 @@ module.exports.stopLeave = (leaveId, req, res) => {
                 }
                 res.render("resume-work", {pageTitle: "Reprise de travail", leave: leave, alert: alert});
             } else {
-                const tempDate = resumeDate;
+                let tempDate = resumeDate;
                 let days = countLeaveDays(resumeDate, end)+1;
-                const daysToWork = [];
+                let daysToWork = [];
 
                 for (let index = 0; index < days; index++ ) {
                     daysToWork.push(tempDate.toLocaleDateString());
@@ -391,7 +390,7 @@ module.exports.stopLeave = (leaveId, req, res) => {
                     }
                 }
 
-                const holidaysToIgnore = getHolidays();
+                let holidaysToIgnore = getHolidays();
                 holidaysToIgnore.then((foundHolidays) => {
                     foundHolidays.forEach(holiday => {
                         const holidayDate = new Date(holiday.date);
@@ -404,13 +403,13 @@ module.exports.stopLeave = (leaveId, req, res) => {
                     days = daysToWork.length;
 
                     //Update the changes to the employee
-                    const concernedEmployee = employee.getEmployeeById(leave.empId);
+                    let concernedEmployee = employee.getEmployeeById(leave.empId);
 
                     concernedEmployee.then((foundEmployee) => {
                         if (foundEmployee.droitN == 26) {
                             foundEmployee.droitN_1 = parseInt(foundEmployee.droitN_1) + days;
                         } else {
-                            const temp = (parseInt(foundEmployee.droitN) + days) - 26;
+                            let temp = (parseInt(foundEmployee.droitN) + days) - 26;
                             foundEmployee.droitN = (parseInt(foundEmployee.droitN) + days) - temp;
                             foundEmployee.droitN_1 = parseInt(foundEmployee.droitN_1) + temp;
                         }
@@ -418,9 +417,8 @@ module.exports.stopLeave = (leaveId, req, res) => {
                     });
 
                     //Update leave's changes
-                    const newEnd = new Date(req.body.resumeDate);
+                    let newEnd = new Date(req.body.resumeDate);
                     newEnd.setDate(newEnd.getDate() - 1);
-                    console.log(newEnd);
                     leave.endDate = newEnd.toLocaleDateString();
                     leave.numberOfDays = leave.numberOfDays - days;
                     leave.save((err) => {

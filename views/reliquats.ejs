@@ -25,6 +25,8 @@
                 <tr>
                     <th>Matricule</th>
                     <th>Départs Autorisées</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
                     <th>Droit <%= today.getFullYear()-1 %></th>
                     <th>Droit <%= today.getFullYear() %></th>
                 </tr>
@@ -33,6 +35,8 @@
                 <% reliquats.forEach(rlqt => { %>
                     <tr>
                         <td><a href="/personnel/<%= rlqt.rid %>"><%= rlqt.matricule %></a></td>
+                        <td><%= rlqt.nom %> </td>
+                        <td><%= rlqt.prenom %> </td>
                         <td><%= rlqt.departs %> </td>
                         <td><%= rlqt.droitN_1 %> </td>
                         <td><%= rlqt.droitN %> </td>

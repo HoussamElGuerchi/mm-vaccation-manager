@@ -24,6 +24,10 @@
             padding-top: 2%;
             padding-bottom: 2%;
         }
+        .date{
+            text-align: right;
+            margin-top: 8%;
+        }
         .leave-desc {
             margin-top: 70px;
         }
@@ -38,8 +42,8 @@
         .m-3 {
             margin: 12% 3%;
         }
-        .chef {
-            margin-top: 70px;
+        .sign {
+            margin-top: 30%;
         }
     </style>
 </head>
@@ -47,6 +51,9 @@
     <div class="">
         <% let date = new Date() %>
         <div class="center">
+            <div class="date">
+                <h3>Agadir, le ........................</h3>
+            </div>
             <h1>TITRE DE CONGE EXCEPRTIONNEL<br>
             N°............................/D/DRH/<%= date.getFullYear() %> </h1>
             <h3>(<%= leave.type %>)</h3>
@@ -88,7 +95,7 @@
             <p><b>LE CHEF DE LA DIVISION DES</b><br><b>RESSOURCES HUMAINES</b></p>
         </div>
 
-        <div class="right m-3">
+        <div class="sign right">
             <p>EN.DCE.PA.GRHS.1.0</p>
         </div>
     </div>

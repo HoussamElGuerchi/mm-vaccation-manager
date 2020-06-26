@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Titre congé administratif</title>
+    <title>TITRE DE CONGE</title>
     <style>
         body {
             width: 793.7px;
@@ -12,6 +12,7 @@
         h1 {
             font-size: 24pt;
             margin-top: 5%;
+            text-decoration: underline;
         }
         h3 {
             font-size: 16pt;
@@ -24,6 +25,12 @@
             padding-top: 3%;
             padding-bottom: 3%;
         }
+
+        .department {
+            text-align: left;
+            margin-top: 6%;
+        }
+
         .leave-desc {
             margin-top: 70px;
         }
@@ -51,8 +58,10 @@
     <div>
         <% let date = new Date() %>
         <div class="center">
-            <h1>Titre de conge administratif </h1>
-            <h3>N°................../D/DRH/<%= date.getFullYear() %></h3>
+            <div class="department">
+                <h5>N°................../D/DRH/<%= date.getFullYear() %></h5>
+            </div>
+            <h1>TITRE DE CONGE</h1>
         </div>
         <table class="leave-desc m-3">
             <tbody>

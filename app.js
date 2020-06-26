@@ -64,7 +64,6 @@ app.post("/authent", (req,res) => {
 
     req.login(user, (err) => {
         if (err) {
-            console.log(err);
             res.redirect("/authent");
         } else {
             passport.authenticate("local")(req, res, () => {
@@ -190,7 +189,6 @@ app.get("/conges-excep", (req,res) => {
     if (req.isAuthenticated()) {
         const excepLeaves = leave.getExcepLeaves();
         excepLeaves.then((result) => {
-            console.log(req.IncomingMessage);
             res.render("excep-leaves-list", {pageTitle: "Congés Exceptionnels", excepLeaves: result});
         })
     } else {

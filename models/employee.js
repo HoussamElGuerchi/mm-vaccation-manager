@@ -160,6 +160,8 @@ module.exports.getReliquats = (res) => {
                 const reliquat = {
                     rid: emp._id,
                     matricule: emp.matricule,
+                    nom: emp.nom,
+                    prenom: emp.prenom,
                     departs: emp.departsAutorisees,
                     droitN_1: emp.droitN_1,
                     droitN: emp.droitN
